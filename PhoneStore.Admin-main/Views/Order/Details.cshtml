@@ -1,0 +1,333 @@
+@model PhoneStore.Models.Order
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.OrderId;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4 pb-10">
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Chi tiết đơn hàng #@Model.OrderId</h2>
+            <div class="flex items-center space-x-3">
+                <a href="@Url.Action("Index")" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Quay lại
+                </a>
+                <a href="@Url.Action("Edit", new { id = Model.OrderId })" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    Sửa đơn hàng
+                </a>
+            </div>
+        </div>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+                <span class="block sm:inline">@TempData["Success"]</span>
+            </div>
+        }
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Thông tin đơn hàng -->
+            <div class="bg-white rounded-lg shadow-md p-6 col-span-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Thông tin đơn hàng</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Mã đơn hàng</p>
+                        <p class="mt-1 text-gray-900">#@Model.OrderId</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Ngày đặt</p>
+                        <p class="mt-1 text-gray-900">@(Model.OrderDate?.ToString("dd/MM/yyyy HH:mm") ?? "Không có")</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Trạng thái</p>
+                        <div class="flex items-center mt-1">
+                            @{
+                                var statusClass = Model.Status switch
+                                {
+                                    "Đang xử lý" => "bg-yellow-100 text-yellow-800",
+                                    "Đã xác nhận" => "bg-blue-100 text-blue-800",
+                                    "Đang giao hàng" => "bg-purple-100 text-purple-800",
+                                    "Đã giao hàng" => "bg-green-100 text-green-800",
+                                    "Đã hủy" => "bg-red-100 text-red-800",
+                                    _ => "bg-gray-100 text-gray-800"
+                                };
+                            }
+                            <span class="px-2 py-1 text-sm font-semibold rounded-full @statusClass">
+                                @(Model.Status ?? "Không xác định")
+                            </span>
+                            <button onclick="showStatusModal()" class="ml-2 text-blue-500 hover:text-blue-700 text-sm">
+                                Đổi trạng thái
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Phương thức thanh toán</p>
+                        <p class="mt-1 text-gray-900">@(string.IsNullOrEmpty(Model.PaymentMethod) ? "Không có" : Model.PaymentMethod)</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Ghi chú</p>
+                        <p class="mt-1 text-gray-900">@(string.IsNullOrEmpty(Model.Notes) ? "Không có" : Model.Notes)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin khách hàng -->
+            <div class="bg-white rounded-lg shadow-md p-6 col-span-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Thông tin khách hàng</h3>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Tên khách hàng</p>
+                        <p class="mt-1 text-gray-900">@(Model.Customer?.Name ?? "Khách vãng lai")</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Email</p>
+                        <p class="mt-1 text-gray-900">@(Model.Customer?.Email ?? "Không có")</p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Số điện thoại</p>
+                        <p class="mt-1 text-gray-900">@(Model.Customer?.Phone ?? "Không có")</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thông tin giao hàng -->
+            <div class="bg-white rounded-lg shadow-md p-6 col-span-1">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Thông tin giao hàng</h3>
+                @if (Model.ShippingAddress != null)
+                {
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Người nhận</p>
+                            <p class="mt-1 text-gray-900">@Model.ShippingAddress.RecipientName</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Số điện thoại</p>
+                            <p class="mt-1 text-gray-900">@Model.ShippingAddress.Phone</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-gray-500">Địa chỉ</p>
+                            <p class="mt-1 text-gray-900">
+                                @Model.ShippingAddress.AddressLine, 
+                                @Model.ShippingAddress.Ward, 
+                                @Model.ShippingAddress.District, 
+                                @Model.ShippingAddress.Province
+                            </p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-gray-500">Không có thông tin giao hàng</p>
+                }
+            </div>
+        </div>
+
+        <!-- Chi tiết đơn hàng -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-800">Chi tiết sản phẩm</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản phẩm</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Màu sắc</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số lượng</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Đơn giá</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        @if (Model.OrderDetails != null && Model.OrderDetails.Any())
+                        {
+                            @foreach (var item in Model.OrderDetails)
+                            {
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            @if (item.Product != null)
+                                            {
+                                                <div class="ml-4">
+                                                    <div class="text-sm font-medium text-gray-900">@item.Product.ProductName</div>
+                                                    <div class="text-sm text-gray-500">#@item.ProductId</div>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="ml-4">
+                                                    <div class="text-sm text-gray-500">Sản phẩm không tồn tại</div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">@(item.Color?.ColorName ?? "Không có")</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">@(item.Quantity ?? 0)</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if (item.Product != null)
+                                        {
+                                            decimal price = item.Product.Price;
+                                            if (item.Product.Discount != null && item.Product.Discount.DiscountPercent.HasValue)
+                                            {
+                                                price = price * (100 - item.Product.Discount.DiscountPercent.Value) / 100;
+                                            }
+                                            <div class="text-sm text-gray-900">@(string.Format("{0:N0} ₫", price))</div>
+                                            @if (item.Product.Discount != null && item.Product.Discount.DiscountPercent.HasValue)
+                                            {
+                                                <div class="text-xs text-red-500">Giảm @(item.Product.Discount.DiscountPercent)%</div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="text-sm text-gray-500">-</div>
+                                        }
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        @if (item.Product != null && item.Quantity.HasValue)
+                                        {
+                                            decimal price = item.Product.Price;
+                                            if (item.Product.Discount != null && item.Product.Discount.DiscountPercent.HasValue)
+                                            {
+                                                price = price * (100 - item.Product.Discount.DiscountPercent.Value) / 100;
+                                            }
+                                            decimal subtotal = price * item.Quantity.Value;
+                                            <div class="text-sm font-medium text-gray-900">@(string.Format("{0:N0} ₫", subtotal))</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-sm text-gray-500">-</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                    Không có sản phẩm nào trong đơn hàng
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Thông tin thanh toán -->
+            <div class="border-t border-gray-200 px-6 py-4">
+                <div class="flex justify-between py-2">
+                    <p class="text-gray-700">Tổng tiền sản phẩm:</p>
+                    <p class="font-medium text-gray-900">@(string.Format("{0:N0} ₫", Model.TotalAmount ?? 0))</p>
+                </div>
+                @if (Model.Coupon != null && Model.Coupon.DiscountAmount.HasValue)
+                {
+                    <div class="flex justify-between py-2">
+                        <p class="text-gray-700">Mã giảm giá (@Model.Coupon.Code):</p>
+                        <p class="font-medium text-red-600">-@(string.Format("{0:N0} ₫", Model.Coupon.DiscountAmount.Value))</p>
+                    </div>
+                }
+                <div class="flex justify-between py-2 border-t border-gray-200 font-semibold">
+                    <p class="text-gray-700">Thành tiền:</p>
+                    <p class="text-lg font-bold text-gray-900">
+                        @{
+                            decimal total = Model.TotalAmount ?? 0;
+                            if (Model.Coupon != null && Model.Coupon.DiscountAmount.HasValue)
+                            {
+                                total -= Model.Coupon.DiscountAmount.Value;
+                                if (total < 0) total = 0;
+                            }
+                        }
+                        @string.Format("{0:N0} ₫", total)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Status Modal -->
+<div id="statusModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg max-w-md mx-auto p-6">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Thay đổi trạng thái đơn hàng</h3>
+        <form id="changeStatusForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="orderId" name="orderId" value="@Model.OrderId" />
+            <div class="mb-4">
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái mới</label>                <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    @foreach (var status in Order.OrderStatus.AllStatuses)
+                    {
+                        <option value="@status" selected="@(status == Model.Status)">@status</option>
+                    }
+                </select>
+            </div>
+            <div class="flex justify-end space-x-4 mt-6">
+                <button type="button" onclick="closeStatusModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+                    Hủy
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                    Cập nhật
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Modal functions
+        function showStatusModal() {
+            document.getElementById('statusModal').classList.remove('hidden');
+        }
+
+        function closeStatusModal() {
+            document.getElementById('statusModal').classList.add('hidden');
+        }
+
+        // Handle status change form submission via AJAX
+        document.getElementById('changeStatusForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const orderId = document.getElementById('orderId').value;
+            const status = document.getElementById('status').value;
+            const token = this.querySelector('input[name="__RequestVerificationToken"]').value;
+            
+            fetch('@Url.Action("ChangeStatus")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': token
+                },
+                body: new URLSearchParams({
+                    orderId: orderId,
+                    status: status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                closeStatusModal();
+                if (data.success) {
+                    // Show success message
+                    alert(data.message);
+                    // Reload the page
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Đã xảy ra lỗi khi xử lý yêu cầu.');
+            });
+        });
+    </script>
+}

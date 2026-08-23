@@ -1,0 +1,188 @@
+@model PhoneStore.Customer.Models.Order
+
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng #" + Model.OrderId;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Chi tiết đơn hàng #@Model.OrderId</h1>
+                    <p class="text-gray-600">Đặt ngày: @Model.OrderDate?.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+                <span class="@(Model.Status switch 
+                {
+                    "Pending" => "bg-yellow-100 text-yellow-800",
+                    "Confirmed" => "bg-blue-100 text-blue-800", 
+                    "Shipping" => "bg-purple-100 text-purple-800",
+                    "Delivered" => "bg-green-100 text-green-800",
+                    "Cancelled" => "bg-red-100 text-red-800",
+                    _ => "bg-gray-100 text-gray-800"
+                }) text-sm font-medium px-3 py-1 rounded-full">
+                    @(Model.Status switch 
+                    {
+                        "Pending" => "Chờ xử lý",
+                        "Confirmed" => "Đã xác nhận", 
+                        "Shipping" => "Đang giao",
+                        "Delivered" => "Đã giao",
+                        "Cancelled" => "Đã hủy",
+                        _ => Model.Status
+                    })
+                </span>
+            </div>
+            
+            <a href="@Url.Action("Orders", "Customer")" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                ← Quay lại danh sách đơn hàng
+            </a>
+        </div>
+
+        <!-- Order Details -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Products -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Sản phẩm đã đặt</h2>
+                    <div class="space-y-4">
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <div class="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
+                                <img src="@(item.Product?.ProductImages.FirstOrDefault()?.ImageUrl ?? "/images/no-image.png")" 
+                                     alt="@item.Product?.ProductName" 
+                                     class="w-16 h-16 object-cover rounded-lg">
+                                <div class="flex-1">
+                                    <h3 class="font-medium text-gray-900">@item.Product?.ProductName</h3>
+                                    <p class="text-sm text-gray-600">Số lượng: @item.Quantity</p>
+                                    <p class="text-sm font-medium text-gray-900">@item.UnitPrice.ToString("N0") VNĐ x @item.Quantity</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-gray-900">@((item.UnitPrice * (item.Quantity ?? 0)).ToString("N0")) VNĐ</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="space-y-6">
+                <!-- Payment Info -->
+                <div class="bg-white rounded-lg shadow-sm p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Thông tin thanh toán</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Phương thức:</span>
+                            <span class="font-medium">@Model.PaymentMethod</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Tạm tính:</span>
+                            <span>@Model.TotalAmount?.ToString("N0") VNĐ</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Phí vận chuyển:</span>
+                            <span>Miễn phí</span>
+                        </div>
+                        <hr>
+                        <div class="flex justify-between text-lg font-semibold">
+                            <span>Tổng cộng:</span>
+                            <span class="text-red-600">@Model.TotalAmount?.ToString("N0") VNĐ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shipping Address -->
+                @if (Model.ShippingAddress != null)
+                {
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Địa chỉ giao hàng</h3>
+                        <div class="space-y-2 text-sm">
+                            <p class="font-medium">@Model.ShippingAddress.RecipientName</p>
+                            <p class="text-gray-600">@Model.ShippingAddress.Phone</p>
+                            <p class="text-gray-600">@Model.ShippingAddress.AddressLine</p>
+                        </div>
+                    </div>
+                }
+
+                <!-- Order Actions -->
+                @if (Model.Status == "Pending" || Model.Status == "Confirmed")
+                {
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Thao tác</h3>
+                        <button onclick="cancelOrder(@Model.OrderId)" 
+                                class="w-full px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                            Hủy đơn hàng
+                        </button>
+                    </div>
+                }
+                else if (Model.Status == "Delivered")
+                {
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Thao tác</h3>
+                        <div class="space-y-2">
+                            <a href="@Url.Action("Review", "Customer", new { id = Model.OrderId })" 
+                               class="block w-full px-4 py-2 text-sm font-medium text-center text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                                Đánh giá sản phẩm
+                            </a>
+                            <button onclick="reorder(@Model.OrderId)" 
+                                    class="w-full px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                                Mua lại
+                            </button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Notes -->
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div class="bg-white rounded-lg shadow-sm p-6 mt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Ghi chú</h3>
+                <p class="text-gray-600">@Model.Notes</p>
+            </div>
+        }
+    </div>
+</div>
+
+<form id="antiForgeryForm" style="display: none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<script>
+// Cancel order function
+function cancelOrder(orderId) {
+    if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '@Url.Action("CancelOrder", "Customer")';
+        
+        // Add CSRF token
+        const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (csrfToken) {
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = '__RequestVerificationToken';
+            tokenInput.value = csrfToken.value;
+            form.appendChild(tokenInput);
+        }
+        
+        // Add order ID
+        const orderIdInput = document.createElement('input');
+        orderIdInput.type = 'hidden';
+        orderIdInput.name = 'id';
+        orderIdInput.value = orderId;
+        form.appendChild(orderIdInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// Reorder function
+function reorder(orderId) {
+    alert('Chức năng mua lại sẽ được triển khai sớm!');
+}
+</script>

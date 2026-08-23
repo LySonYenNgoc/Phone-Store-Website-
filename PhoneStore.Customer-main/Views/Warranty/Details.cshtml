@@ -1,0 +1,318 @@
+@model PhoneStore.Customer.Models.Warranty
+@{
+    ViewData["Title"] = "Chi tiết bảo hành";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="@Url.Action("Index", "Home")" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                    </svg>
+                    Trang chủ
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <a href="@Url.Action("Index")" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Bảo hành</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">@Model.WarrantyCode</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 flex items-center">
+            <svg class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 2.676-1.148 5.216-2.793 7.45-4.971.134-.13.264-.263.39-.398A12.019 12.019 0 0021 9a12.02 12.02 0 00-.382-3.016z"></path>
+            </svg>
+            Chi tiết bảo hành
+        </h2>
+        @if (Model.IsActiveWarranty())
+        {
+            <a href="@Url.Action("CreateClaim", new { warrantyId = Model.WarrantyId })" 
+               class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Tạo yêu cầu bảo hành
+            </a>
+        }
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Warranty Information -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h5 class="text-lg font-semibold text-gray-900">Thông tin bảo hành</h5>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Mã bảo hành:</span>
+                                <span class="text-sm font-semibold text-blue-600">@Model.WarrantyCode</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày bắt đầu:</span>
+                                <span class="text-sm text-gray-900">@Model.StartDate.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày kết thúc:</span>
+                                <span class="text-sm text-gray-900">@Model.EndDate.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Thời hạn:</span>
+                                <span class="text-sm text-gray-900">@Model.WarrantyPeriodMonths tháng</span>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Trạng thái:</span>
+                                <div>
+                                    @if (Model.IsActiveWarranty())
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Hoạt động</span>
+                                    }
+                                    else if (Model.Status == PhoneStore.Customer.Models.Warranty.WarrantyStatus.Expired || DateTime.Now > Model.EndDate)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Hết hạn</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@Model.Status</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày tạo:</span>
+                                <span class="text-sm text-gray-900">@Model.CreatedDate.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Số ngày còn lại:</span>
+                                <div>
+                                    @if (Model.IsActiveWarranty())
+                                    {
+                                        var daysLeft = (Model.EndDate - DateTime.Now).Days;
+                                        <span class="text-sm text-green-600 font-medium">@daysLeft ngày</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-sm text-red-600 font-medium">Đã hết hạn</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Information -->
+            <div class="bg-white rounded-lg shadow-lg mt-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h5 class="text-lg font-semibold text-gray-900">Thông tin sản phẩm</h5>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Tên sản phẩm:</span>
+                                <span class="text-sm font-semibold text-gray-900">@Model.OrderDetail.Product.Name</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Màu sắc:</span>
+                                <span class="text-sm text-gray-900">
+                                    @if (Model.OrderDetail.Color != null)
+                                    {
+                                        @Model.OrderDetail.Color.Name
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-400">Không có</span>
+                                    }
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Số lượng:</span>
+                                <span class="text-sm text-gray-900">@Model.OrderDetail.Quantity</span>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Giá bán:</span>
+                                <span class="text-sm font-semibold text-green-600">@Model.OrderDetail.Product.Price.ToString("N0") ₫</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Mã đơn hàng:</span>
+                                <span class="text-sm font-semibold text-blue-600">#@Model.OrderDetail.Order.OrderId</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày mua:</span>
+                                <span class="text-sm text-gray-900">@(Model.OrderDetail.Order.OrderDate?.ToString("dd/MM/yyyy") ?? "Không có")</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warranty Status Card -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h5 class="text-lg font-semibold text-gray-900">Tình trạng bảo hành</h5>
+                </div>
+                <div class="p-6 text-center">
+                    @{
+                        var progress = Model.IsActiveWarranty() ? ((DateTime.Now - Model.StartDate).Days * 100.0) / (Model.EndDate - Model.StartDate).Days : 0;
+                    }
+                    @if (Model.IsActiveWarranty())
+                    {
+                        <svg class="w-16 h-16 text-green-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 2.676-1.148 5.216-2.793 7.45-4.971.134-.13.264-.263.39-.398A12.019 12.019 0 0021 9a12.02 12.02 0 00-.382-3.016z"></path>
+                        </svg>
+                        <h5 class="text-lg font-medium text-green-600 mb-2">Bảo hành đang hoạt động</h5>
+                        <p class="text-gray-500 mb-4">Sản phẩm của bạn đang được bảo hành</p>
+                        
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: @progress.ToString("F1")%"></div>
+                        </div>
+                        <span class="text-sm text-gray-500">@progress.ToString("F1")% thời gian bảo hành đã sử dụng</span>
+                    }
+                    else
+                    {
+                        <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.268 19.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                        <h5 class="text-lg font-medium text-red-600 mb-2">Bảo hành đã hết hạn</h5>
+                        <p class="text-gray-500">Thời gian bảo hành đã kết thúc</p>
+                    }
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-lg mt-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h6 class="text-base font-semibold text-gray-900">Thao tác nhanh</h6>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-3">
+                        @if (Model.IsActiveWarranty())
+                        {
+                            <a href="@Url.Action("CreateClaim", new { warrantyId = Model.WarrantyId })" 
+                               class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-yellow-600 hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Tạo yêu cầu bảo hành
+                            </a>
+                        }
+                        <a href="@Url.Action("Index")" class="w-full inline-flex justify-center items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            </svg>
+                            Danh sách bảo hành
+                        </a>
+                        <a href="@Url.Action("Index", "Home")" class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                            </svg>
+                            Về trang chủ
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warranty Claims History -->
+    @if (Model.WarrantyClaims.Any())
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Lịch sử yêu cầu bảo hành</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Mã yêu cầu</th>
+                                        <th>Loại vấn đề</th>
+                                        <th>Mô tả</th>
+                                        <th>Ngày gửi</th>
+                                        <th>Trạng thái</th>
+                                        <th>Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var claim in Model.WarrantyClaims.OrderByDescending(wc => wc.SubmittedDate))
+                                    {
+                                        <tr>
+                                            <td><strong class="text-primary">@claim.WarrantyClaimId</strong></td>
+                                            <td>@claim.IssueType</td>
+                                            <td>
+                                                <div style="max-width: 200px;">
+                                                    @(claim.IssueDescription.Length > 50 ? 
+                                                      claim.IssueDescription.Substring(0, 50) + "..." : 
+                                                      claim.IssueDescription)
+                                                </div>
+                                            </td>
+                                            <td>@claim.SubmittedDate.ToString("dd/MM/yyyy")</td>
+                                            <td>
+                                                @switch (claim.Status)
+                                                {
+                                                    case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Pending:
+                                                        <span class="badge bg-warning">Chờ xử lý</span>
+                                                        break;
+                                                    case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.InProgress:
+                                                        <span class="badge bg-info">Đang xử lý</span>
+                                                        break;
+                                                    case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Approved:
+                                                        <span class="badge bg-success">Chấp nhận</span>
+                                                        break;
+                                                    case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Rejected:
+                                                        <span class="badge bg-danger">Từ chối</span>
+                                                        break;
+                                                    case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Completed:
+                                                        <span class="badge bg-primary">Hoàn thành</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(claim.AdminNotes))
+                                                {
+                                                    <small class="text-muted">@claim.AdminNotes</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

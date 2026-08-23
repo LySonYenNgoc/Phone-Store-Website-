@@ -1,0 +1,364 @@
+@model PhoneStore.Models.Product
+@{
+    ViewData["Title"] = "Thêm sản phẩm mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4">
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Thêm sản phẩm mới</h2>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                    <span class="block sm:inline">@TempData["Error"]</span>
+                </div>
+            }
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                    <strong>Vui lòng kiểm tra lại thông tin:</strong>
+                    <ul class="mt-2 list-disc list-inside">
+                        @foreach (var modelState in ViewData.ModelState.Values)
+                        {
+                            @foreach (var error in modelState.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        }
+                    </ul>
+                </div>
+            }
+
+            <form id="productForm" asp-action="Create" method="post" enctype="multipart/form-data" class="space-y-6">
+                @Html.AntiForgeryToken()
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="ProductName" class="block text-sm font-medium text-gray-700 mb-2">Tên sản phẩm</label>
+                        <input asp-for="ProductName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <span asp-validation-for="ProductName" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="CategoryId" class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+                        <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Chọn danh mục --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Price" class="block text-sm font-medium text-gray-700 mb-2">Giá</label>
+                        <input asp-for="Price" type="number" step="1000" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <span asp-validation-for="Price" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Stock" class="block text-sm font-medium text-gray-700 mb-2">Số lượng tồn</label>
+                        <input asp-for="Stock" type="number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <span asp-validation-for="Stock" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="DiscountId" class="block text-sm font-medium text-gray-700 mb-2">Chương trình giảm giá</label>
+                        <select asp-for="DiscountId" asp-items="ViewBag.Discounts" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Chọn chương trình giảm giá --</option>
+                        </select>
+                        <span asp-validation-for="DiscountId" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="ShortDescription" class="block text-sm font-medium text-gray-700 mb-2">Mô tả ngắn</label>
+                        <textarea asp-for="ShortDescription" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        <span asp-validation-for="ShortDescription" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label asp-for="DetailDescription" class="block text-sm font-medium text-gray-700 mb-2">Mô tả chi tiết</label>
+                        <textarea asp-for="DetailDescription" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                        <span asp-validation-for="DetailDescription" class="text-sm text-red-600"></span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Màu sắc và hình ảnh sản phẩm</label>
+                        <div id="colorContainer">
+                            <div class="color-section mb-4 p-4 border border-gray-200 rounded-lg">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <select name="Colors" required class="color-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="">-- Chọn màu --</option>
+                                        @foreach (var color in ViewBag.Colors)
+                                        {
+                                            <option value="@color.Value">@color.Text</option>
+                                        }
+                                    </select>
+                                    <button type="button" onclick="removeColorSection(this)" class="remove-color-btn px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 hidden">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+                                    <div class="space-y-1 text-center">
+                                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        <div class="flex text-sm text-gray-600">
+                                            <label class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                                                <span>Tải lên hình ảnh</span>
+                                                <input type="file" class="image-input sr-only" name="Images" multiple required>
+                                            </label>
+                                        </div>
+                                        <p class="text-xs text-gray-500">PNG, JPG tối đa 10MB/ảnh</p>
+                                        <div class="image-preview flex flex-wrap gap-2 mt-2"></div>
+                                        <div class="upload-progress hidden mt-2">
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addColorSection()" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                            Thêm màu sắc
+                        </button>
+                    </div>                    <div class="md:col-span-2 flex justify-end gap-4">
+                        <a asp-action="Index" id="btnCancel" class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 flex items-center">
+                            Hủy
+                        </a>
+                        <button type="submit" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed" id="submitButton" onclick="console.log('Submit button clicked!');">
+                            Thêm sản phẩm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}    <script>
+        function updateSubmitButton() {
+            const form = document.getElementById('productForm');
+            const submitButton = document.getElementById('submitButton');
+            const isValid = form.checkValidity() && validateImages();
+            submitButton.disabled = !isValid;
+
+            // Show/Hide remove buttons
+            const removeButtons = document.querySelectorAll('.remove-color-btn');
+            if (removeButtons.length > 1) {
+                removeButtons.forEach(btn => btn.classList.remove('hidden'));
+            } else if (removeButtons.length === 1) {
+                removeButtons[0].classList.add('hidden');
+            }
+        }
+
+        function validateImages() {
+            const sections = document.querySelectorAll('.color-section');
+            let isValid = true;
+            
+            const selectedColors = new Set();
+            
+            for (const section of sections) {
+                const colorSelect = section.querySelector('.color-select');
+                const fileInput = section.querySelector('.image-input');
+                
+                // Kiểm tra nếu có màu được chọn
+                if (!colorSelect.value) {
+                    console.log('Color not selected');
+                    isValid = false;
+                } else if (selectedColors.has(colorSelect.value)) {
+                    // Ngăn không cho chọn trùng màu
+                    alert('Mỗi màu chỉ có thể được chọn một lần');
+                    colorSelect.value = '';
+                    isValid = false;
+                } else {
+                    selectedColors.add(colorSelect.value);
+                }
+                
+                // Kiểm tra nếu có ảnh được chọn
+                if (!fileInput.files.length) {
+                    console.log('No files selected');
+                    isValid = false;
+                }
+
+                // Allow any file type as requested
+                /*
+                for (const file of fileInput.files) {
+                    if (file.size > 10 * 1024 * 1024) { // 10MB
+                        alert('Một hoặc nhiều file ảnh vượt quá giới hạn 10MB');
+                        isValid = false;
+                    }
+                    if (!file.type.startsWith('image/')) {
+                        alert('Một hoặc nhiều file không phải là ảnh');
+                        isValid = false;
+                    }
+                }
+                */
+            }
+            
+            return isValid;
+        }
+
+        function setupImagePreview(container) {
+            const fileInput = container.querySelector('.image-input');
+            const previewContainer = container.querySelector('.image-preview');
+            const progressBar = container.querySelector('.upload-progress');
+
+            fileInput.addEventListener('change', function() {
+                previewContainer.innerHTML = '';
+                const files = Array.from(this.files);
+                
+                if (files.length > 0) {
+                    console.log(`Preview ${files.length} images for input: ${this.name}`);
+                }
+                
+                files.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        if (file.size > 10 * 1024 * 1024) {
+                            alert(`File ${file.name} vượt quá 10MB`);
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.classList.add('h-20', 'w-20', 'object-cover', 'rounded-lg');
+                            img.loading = 'lazy';
+                            previewContainer.appendChild(img);
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert(`File ${file.name} không phải là ảnh`);
+                    }
+                });
+
+                updateSubmitButton();
+            });
+        }        function addColorSection() {
+            const container = document.getElementById('colorContainer');
+            const template = container.children[0].cloneNode(true);
+            
+            // Reset form elements
+            template.querySelector('.color-select').value = '';
+            template.querySelector('.image-input').value = '';
+            template.querySelector('.image-preview').innerHTML = '';
+            
+            // Đảm bảo mỗi input có ID riêng biệt
+            const colorIndex = container.children.length;
+            
+            // Cập nhật nội dung của phần tử, thêm chỉ số để xác định
+            const fileInput = template.querySelector('.image-input');
+            fileInput.id = 'image-input-' + colorIndex;
+            
+            container.appendChild(template);
+            setupImagePreview(template);
+
+            // Cập nhật sự kiện cho drag & drop
+            setupDragAndDrop(template);
+            
+            // Update validation
+            updateSubmitButton();
+            
+            console.log(`Added new color section, total sections: ${container.children.length}`);
+        }
+
+        function removeColorSection(button) {
+            const sections = document.querySelectorAll('.color-section');
+            if (sections.length > 1) {
+                button.closest('.color-section').remove();
+                updateSubmitButton();
+                console.log(`Removed color section, remaining sections: ${sections.length - 1}`);
+            }
+        }
+        
+        function setupDragAndDrop(section) {
+            const dropZone = section.querySelector('.border-dashed');
+            const fileInput = section.querySelector('.image-input');
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight(e) {
+                dropZone.classList.add('border-blue-500', 'bg-blue-50');
+            }
+
+            function unhighlight(e) {
+                dropZone.classList.remove('border-blue-500', 'bg-blue-50');
+            }
+
+            dropZone.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                fileInput.files = dt.files;
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            });
+        }        // Thiết lập các phần tử ban đầu
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup initial color section
+            setupImagePreview(document.querySelector('.color-section'));
+            setupDragAndDrop(document.querySelector('.color-section'));
+            
+            // Set up form validation
+            document.getElementById('productForm').addEventListener('input', updateSubmitButton);
+            
+            document.getElementById('productForm').addEventListener('submit', function(e) {
+                console.log('Form submit event triggered!');
+                
+                // Kiểm tra trùng màu sắc
+                const colorSelects = document.querySelectorAll('.color-select');
+                const selectedColors = new Set();
+                let hasDuplicate = false;
+                
+                colorSelects.forEach(select => {
+                    if (select.value && selectedColors.has(select.value)) {
+                        hasDuplicate = true;
+                        alert('Mỗi màu chỉ có thể được chọn một lần. Vui lòng kiểm tra lại.');
+                        e.preventDefault();
+                        return false;
+                    }
+                    if (select.value) {
+                        selectedColors.add(select.value);
+                    }
+                });
+                
+                if (hasDuplicate) {
+                    return false;
+                }
+                
+                const valid = this.checkValidity() && validateImages();
+                console.log('Form valid:', valid);
+                
+                if (!valid) {
+                    e.preventDefault();
+                    alert('Vui lòng kiểm tra lại form trước khi gửi');
+                    return false;
+                }
+                
+                // Hiển thị thông báo đang xử lý
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Đang xử lý...';
+            });
+            
+            updateSubmitButton();
+        });
+    </script>
+}

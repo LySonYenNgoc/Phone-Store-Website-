@@ -1,0 +1,352 @@
+@model PhoneStore.ViewModels.WarrantyIndexViewModel
+
+@{
+    ViewData["Title"] = "Quản lý bảo hành";
+}
+
+<div class="flex-1 p-6">
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                Quản lý bảo hành
+            </h2>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <form asp-action="Index" method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Tìm kiếm</label>
+                    <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
+                           placeholder="Mã bảo hành, tên khách hàng, email...">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Trạng thái</label>
+                    <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="@PhoneStore.Models.Warranty.WarrantyStatus.Active" selected="@(ViewData["Status"]?.ToString() == PhoneStore.Models.Warranty.WarrantyStatus.Active)">Đang bảo hành</option>
+                        <option value="@PhoneStore.Models.Warranty.WarrantyStatus.Expired" selected="@(ViewData["Status"]?.ToString() == PhoneStore.Models.Warranty.WarrantyStatus.Expired)">Hết hạn</option>
+                        <option value="@PhoneStore.Models.Warranty.WarrantyStatus.Void" selected="@(ViewData["Status"]?.ToString() == PhoneStore.Models.Warranty.WarrantyStatus.Void)">Đã hủy</option>
+                        <option value="@PhoneStore.Models.Warranty.WarrantyStatus.Transferred" selected="@(ViewData["Status"]?.ToString() == PhoneStore.Models.Warranty.WarrantyStatus.Transferred)">Đã chuyển nhượng</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Tìm kiếm
+                    </button>
+                </div>
+                <div class="flex items-end">
+                    <a href="@Url.Action("Index")" class="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                        Xóa bộ lọc
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 p-6">
+            <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold">@Model.TotalWarranties</div>
+                        <div class="text-blue-100">Tổng bảo hành</div>
+                    </div>
+                    <div class="text-blue-200">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold">@Model.ActiveWarranties</div>
+                        <div class="text-green-100">Đang hoạt động</div>
+                    </div>
+                    <div class="text-green-200">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl p-6 text-white cursor-pointer" onclick="toggleNeedingServiceList()">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold">@Model.WarrantiesNeedingService</div>
+                        <div class="text-orange-100">Cần bảo hành</div>
+                    </div>
+                    <div class="text-orange-200">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold">@Model.ExpiringWarranties</div>
+                        <div class="text-yellow-100">Sắp hết hạn</div>
+                    </div>
+                    <div class="text-yellow-200">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-6 text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-3xl font-bold">@Model.ClaimedWarranties</div>
+                        <div class="text-red-100">Khiếu nại bảo hành</div>
+                    </div>
+                    <div class="text-red-200">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warranties Needing Service Section -->
+        <div id="needingServiceSection" class="hidden px-6 py-4 bg-orange-50 border-t border-orange-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-orange-800 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Sản phẩm cần được bảo hành (@Model.WarrantiesNeedingService)
+                </h3>
+                <a asp-action="Claims" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm">
+                    Xem tất cả khiếu nại
+                </a>
+            </div>
+            @if (Model.WarrantiesWithPendingClaims?.Any() == true)
+            {
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach (var warranty in Model.WarrantiesWithPendingClaims.Take(6))
+                    {
+                        <div class="bg-white rounded-lg border border-orange-200 p-4 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-orange-800">@warranty.WarrantyCode</span>
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                    @warranty.ClaimsCount khiếu nại
+                                </span>
+                            </div>
+                            <div class="text-sm text-gray-600 mb-1">
+                                <strong>Khách hàng:</strong> @warranty.CustomerName
+                            </div>
+                            <div class="text-sm text-gray-600 mb-3">
+                                <strong>Sản phẩm:</strong> @warranty.ProductName
+                            </div>
+                            <div class="flex space-x-2">
+                                <a asp-action="Details" asp-route-id="@warranty.WarrantyId" 
+                                   class="flex-1 px-3 py-1 text-xs text-center bg-blue-600 text-white rounded hover:bg-blue-700">
+                                    Chi tiết
+                                </a>
+                                <a asp-action="Claims" asp-route-searchTerm="@warranty.WarrantyCode" 
+                                   class="flex-1 px-3 py-1 text-xs text-center bg-orange-600 text-white rounded hover:bg-orange-700">
+                                    Xử lý
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @if (Model.WarrantiesWithPendingClaims.Count > 6)
+                {
+                    <div class="mt-4 text-center">
+                        <a asp-action="Claims" class="text-orange-600 hover:text-orange-800 text-sm font-medium">
+                            Xem thêm @(Model.WarrantiesWithPendingClaims.Count - 6) sản phẩm khác cần bảo hành →
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-8 text-gray-500">
+                    <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <p>Không có sản phẩm nào cần bảo hành</p>
+                </div>
+            }
+        </div>
+
+        <!-- Warranties Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã bảo hành</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản phẩm</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày bắt đầu</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày hết hạn</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @if (Model.Warranties?.Any() == true)
+                    {
+                        @foreach (var warranty in Model.Warranties)
+                        {
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="font-semibold text-gray-900">@warranty.WarrantyCode</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div>
+                                        <div class="font-semibold text-gray-900">@warranty.CustomerName</div>
+                                        <div class="text-sm text-gray-500">@warranty.CustomerEmail</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="font-semibold text-gray-900">@warranty.ProductName</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    @warranty.StartDate.ToString("dd/MM/yyyy")
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    @warranty.EndDate.ToString("dd/MM/yyyy")
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if (warranty.Status == PhoneStore.Models.Warranty.WarrantyStatus.Active)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Đang bảo hành</span>
+                                    }
+                                    else if (warranty.Status == PhoneStore.Models.Warranty.WarrantyStatus.Expired)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Hết hạn</span>
+                                    }
+                                    else if (warranty.Status == PhoneStore.Models.Warranty.WarrantyStatus.Void)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Đã hủy</span>
+                                    }
+                                    else if (warranty.Status == PhoneStore.Models.Warranty.WarrantyStatus.Transferred)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đã chuyển nhượng</span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <a asp-action="Details" asp-route-id="@warranty.WarrantyId"
+                                           class="inline-flex items-center px-3 py-1 border border-blue-300 text-blue-700 rounded-md hover:bg-blue-50" title="Xem chi tiết">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
+                                        <a asp-action="Claims" asp-route-id="@warranty.WarrantyId"
+                                           class="inline-flex items-center px-3 py-1 border border-indigo-300 text-indigo-700 rounded-md hover:bg-indigo-50" title="Khiếu nại">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                                </svg>
+                                Không có dữ liệu bảo hành
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="px-6 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-center">
+                <nav class="flex items-center space-x-1">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a asp-action="Index"
+                           asp-route-page="@(Model.CurrentPage - 1)"
+                           asp-route-searchTerm="@ViewData["SearchTerm"]"
+                           asp-route-status="@ViewData["Status"]"
+                           class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </a>
+                    }
+
+                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                    {
+                        @if (i == Model.CurrentPage)
+                        {
+                            <span class="px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-300">@i</span>
+                        }
+                        else
+                        {
+                            <a asp-action="Index"
+                               asp-route-page="@i"
+                               asp-route-searchTerm="@ViewData["SearchTerm"]"
+                               asp-route-status="@ViewData["Status"]"
+                               class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50">@i</a>
+                        }
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a asp-action="Index"
+                           asp-route-page="@(Model.CurrentPage + 1)"
+                           asp-route-searchTerm="@ViewData["SearchTerm"]"
+                           asp-route-status="@ViewData["Status"]"
+                           class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    }
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Auto-submit form when status changes
+            $('select[name="status"]').change(function() {
+                $(this).closest('form').submit();
+            });
+        });
+
+        function toggleNeedingServiceList() {
+            const section = document.getElementById('needingServiceSection');
+            if (section.classList.contains('hidden')) {
+                section.classList.remove('hidden');
+            } else {
+                section.classList.add('hidden');
+            }
+        }
+    </script>
+}

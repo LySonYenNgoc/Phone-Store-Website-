@@ -1,0 +1,288 @@
+@model PhoneStore.Customer.ViewModels.CheckoutViewModel
+
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Thanh toán đơn hàng</h1>
+
+    <form id="checkoutForm" asp-action="PlaceOrder" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start xl:gap-x-16">
+            <!-- Checkout Form -->
+            <section class="lg:col-span-7">
+
+                <!-- Shipping Address Section -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Địa chỉ giao hàng</h2>
+
+                    @if (Model.Addresses.Any())
+                    {
+                        <!-- Existing Addresses -->
+                        <div class="space-y-3 mb-4">
+                            @foreach (var address in Model.Addresses)
+                            {
+                                <label class="flex items-start space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                    <input type="radio" name="SelectedAddressId" value="@address.AddressId"
+                                           @(address.IsDefault ? "checked" : "")
+                                           class="mt-1 text-blue-600 focus:ring-blue-500"
+                                           onchange="toggleNewAddressForm(false)">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-gray-900">@address.RecipientName</div>
+                                        <div class="text-sm text-gray-600">@address.Phone</div>
+                                        <div class="text-sm text-gray-600">@address.FullAddress</div>
+                                        @if (address.IsDefault)
+                                        {
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+                                                Mặc định
+                                            </span>
+                                        }
+                                    </div>
+                                </label>
+                            }
+                        </div>
+                    }
+
+                    <!-- Add New Address Option -->
+                    <label class="flex items-start space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+                        <input type="radio" id="CreateNewAddress" name="CreateNewAddress" value="true"
+                               class="mt-1 text-blue-600 focus:ring-blue-500"
+                               onchange="toggleNewAddressForm(true)">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900">Thêm địa chỉ mới</div>
+                            <div class="text-sm text-gray-600">Nhập địa chỉ giao hàng mới</div>
+                        </div>
+                    </label>
+
+                    <!-- New Address Form -->
+                    <div id="newAddressForm" class="mt-4 p-4 border rounded-lg bg-gray-50" style="display: none;">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tên người nhận *</label>
+                                <input type="text" asp-for="NewAddress.RecipientName"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại *</label>
+                                <input type="tel" asp-for="NewAddress.Phone"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ chi tiết *</label>
+                                <input type="text" asp-for="NewAddress.AddressLine" placeholder="Số nhà, tên đường"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Phường/Xã *</label>
+                                <input type="text" asp-for="NewAddress.Ward"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện *</label>
+                                <input type="text" asp-for="NewAddress.District"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tỉnh/Thành phố *</label>
+                                <input type="text" asp-for="NewAddress.Province"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="flex items-center">
+                                    <input type="checkbox" asp-for="NewAddress.IsDefault"
+                                           class="text-blue-600 focus:ring-blue-500 rounded">
+                                    <span class="ml-2 text-sm text-gray-700">Đặt làm địa chỉ mặc định</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Section -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Phương thức thanh toán</h2>
+                    <div class="space-y-3">
+                        @foreach (var paymentMethod in Model.PaymentMethods)
+                        {
+                            <label class="flex items-center space-x-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="SelectedPaymentMethod" value="@paymentMethod"
+                                       @(paymentMethod == "Tiền mặt khi nhận hàng" ? "checked" : "")
+                                       class="text-blue-600 focus:ring-blue-500">
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">@paymentMethod</div>
+                                    @if (paymentMethod == "Tiền mặt khi nhận hàng")
+                                    {
+                                        <div class="text-sm text-gray-600">Thanh toán khi nhận hàng</div>
+                                    }
+                                    else if (paymentMethod == "Chuyển khoản ngân hàng")
+                                    {
+                                        <div class="text-sm text-gray-600">Chuyển khoản qua ngân hàng</div>
+                                    }
+                                    else if (paymentMethod == "Ví điện tử")
+                                    {
+                                        <div class="text-sm text-gray-600">Thanh toán qua ví điện tử</div>
+                                    }
+                                </div>
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <!-- Order Notes Section -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-4">Ghi chú đơn hàng</h2>
+                    <textarea name="Notes" rows="3" placeholder="Ghi chú thêm cho đơn hàng (tùy chọn)"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+            </section>
+
+            <!-- Order Summary -->
+            <section class="mt-16 bg-gray-50 rounded-lg px-4 py-6 sm:p-6 lg:p-8 lg:mt-0 lg:col-span-5">
+                <h2 class="text-lg font-medium text-gray-900 mb-6">Tóm tắt đơn hàng</h2>
+
+                <!-- Cart Items -->
+                <div class="flow-root mb-6">
+                    <ul class="-my-6 divide-y divide-gray-200">
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <li class="py-6 flex">
+                                <div class="flex-shrink-0 w-24 h-24 border border-gray-200 rounded-md overflow-hidden">
+                                    <img src="@(item.ImageUrl ?? "/images/no-image.jpg")" alt="@item.ProductName"
+                                         class="w-full h-full object-center object-cover">
+                                </div>
+
+                                <div class="ml-4 flex-1 flex flex-col">
+                                    <div>
+                                        <div class="flex justify-between text-base font-medium text-gray-900">
+                                            <h3>@item.ProductName</h3>
+                                            <p class="ml-4">@item.Price.ToString("N0") VNĐ</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 flex items-end justify-between text-sm">
+                                        <p class="text-gray-500">SL: @item.Quantity</p>
+                                        <p class="font-medium text-gray-900">@item.Total.ToString("N0") VNĐ</p>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <!-- Order Totals -->
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="flex justify-between text-base font-medium text-gray-900 mb-2">
+                        <p>Tạm tính</p>
+                        <p>@Model.Subtotal.ToString("N0") VNĐ</p>
+                    </div>
+                    <div class="flex justify-between text-base font-medium text-gray-900 mb-2">
+                        <p>Phí vận chuyển</p>
+                        <p>Miễn phí</p>
+                    </div>
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="flex justify-between text-lg font-bold text-gray-900">
+                            <p>Tổng cộng</p>
+                            <p>@Model.Total.ToString("N0") VNĐ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Place Order Button -->
+                <div class="mt-6">
+                    <button type="submit" id="placeOrderBtn"
+                            class="w-full bg-blue-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-blue-500">
+                        Đặt hàng
+                    </button>
+                </div>
+
+                <div class="mt-6 flex justify-center text-sm text-center text-gray-500">
+                    <p>
+                        <a href="/cart" class="text-blue-600 font-medium hover:text-blue-500">
+                            Quay lại giỏ hàng<span aria-hidden="true"> &larr;</span>
+                        </a>
+                    </p>
+                </div>
+            </section>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleNewAddressForm(show) {
+    const form = document.getElementById('newAddressForm');
+    const existingAddressRadios = document.querySelectorAll('input[name="SelectedAddressId"]');
+
+    if (show) {
+        form.style.display = 'block';
+        // Uncheck existing address radios
+        existingAddressRadios.forEach(radio => radio.checked = false);
+    } else {
+        form.style.display = 'none';
+        // Uncheck create new address radio
+        document.querySelector('input[name="CreateNewAddress"]').checked = false;
+    }
+}
+
+document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    const originalText = placeOrderBtn.innerHTML;
+
+    // Disable button and show loading
+    placeOrderBtn.disabled = true;
+    placeOrderBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang xử lý...';
+
+    // Get form data
+    const formData = new FormData(this);
+
+    fetch('/checkout/placeorder', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            // Redirect to confirmation page
+            setTimeout(() => {
+                window.location.href = `/checkout/confirmation/${data.orderId}`;
+            }, 1000);
+        } else {
+            showNotification(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Có lỗi xảy ra khi đặt hàng', 'error');
+    })
+    .finally(() => {
+        // Restore button state
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.innerHTML = originalText;
+    });
+});
+
+// Show notification function
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg ${
+        type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+    }`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-3"></i>
+            <span>${message}</span>
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Remove notification after 5 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+</script>

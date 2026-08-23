@@ -1,0 +1,203 @@
+@model PhoneStore.Models.Coupon
+@using PhoneStore.Controllers
+
+@{
+    ViewData["Title"] = "Chi tiết Coupon";
+    var status = CouponController.GetCouponStatus(Model);
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center">
+                <a href="@Url.Action("Index")" class="text-blue-600 hover:text-blue-800 mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                </a>
+                <h1 class="text-3xl font-bold text-gray-800">Chi tiết Coupon</h1>
+            </div>
+            <div class="flex space-x-2">
+                <a href="@Url.Action("Edit", new { id = Model.CouponId })"
+                   class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    Chỉnh sửa
+                </a>
+                <a href="@Url.Action("Delete", new { id = Model.CouponId })"
+                   class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Xóa
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Coupon Information -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Coupon Details Card -->
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg text-white p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold">@Html.DisplayFor(model => model.Code)</h2>
+                        <p class="text-blue-100">Mã Coupon</p>
+                    </div>
+                    <span class="px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-semibold">
+                        ID: @Html.DisplayFor(model => model.CouponId)
+                    </span>
+                </div>
+
+                <div class="text-3xl font-bold mb-2">
+                    @Html.DisplayFor(model => model.DiscountAmount) VNĐ
+                </div>
+                <p class="text-blue-100 mb-4">Số tiền giảm giá</p>
+
+                <div class="flex justify-between items-center">
+                    <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full @CouponController.GetCouponStatusClass(Model) text-gray-800">
+                        @CouponController.GetCouponStatusText(Model)
+                    </span>
+                    @if (status == "active")
+                    {
+                        <form method="post" action="@Url.Action("ToggleStatus", new { id = Model.CouponId })" class="inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-1 rounded text-sm transition duration-200"
+                                    onclick="return confirm('Bạn có chắc chắn muốn đánh dấu coupon này là đã sử dụng?')">
+                                Đánh dấu đã sử dụng
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            <!-- Timeline Information -->
+            <div class="space-y-6">
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Thời gian</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                            <div>
+                                <p class="font-medium text-gray-800">Ngày tạo</p>
+                                <p class="text-gray-600">@Model.CreatedDate?.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 @(Model.ExpiryDate > DateTime.Now ? "bg-blue-500" : "bg-red-500") rounded-full mr-3"></div>
+                            <div>
+                                <p class="font-medium text-gray-800">Ngày hết hạn</p>
+                                <p class="text-gray-600">@Model.ExpiryDate?.ToString("dd/MM/yyyy HH:mm")</p>
+                                @if (Model.ExpiryDate > DateTime.Now)
+                                {
+                                    <p class="text-sm text-blue-600">Còn @((Model.ExpiryDate - DateTime.Now)?.Days) ngày</p>
+                                }
+                                else
+                                {
+                                    <p class="text-sm text-red-600">Đã hết hạn @((DateTime.Now - Model.ExpiryDate)?.Days) ngày</p>
+                                }
+                            </div>
+                        </div>
+
+                        @if (Model.UsedDate.HasValue)
+                        {
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-gray-500 rounded-full mr-3"></div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Ngày sử dụng</p>
+                                    <p class="text-gray-600">@Model.UsedDate?.ToString("dd/MM/yyyy HH:mm")</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Usage Statistics -->
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">Thống kê sử dụng</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">@Model.Orders.Count()</div>
+                            <div class="text-sm text-gray-600">Đơn hàng sử dụng</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600">
+                                @(Model.Orders.Sum(o => Model.DiscountAmount ?? 0).ToString("N0"))
+                            </div>
+                            <div class="text-sm text-gray-600">Tổng tiết kiệm (VNĐ)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Using This Coupon -->
+        @if (Model.Orders.Any())
+        {
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Đơn hàng sử dụng coupon này</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đơn hàng</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày đặt</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng tiền</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tiết kiệm</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            @foreach (var order in Model.Orders.OrderByDescending(o => o.OrderDate))
+                            {
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-blue-600">
+                                            <a href="@Url.Action("Details", "Order", new { id = order.OrderId })">
+                                                #@order.OrderId
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">@order.Customer?.Name</div>
+                                        <div class="text-sm text-gray-500">@order.Customer?.Email</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">@order.OrderDate?.ToString("dd/MM/yyyy")</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900">@order.TotalAmount?.ToString("N0") VNĐ</div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-green-600">@Model.DiscountAmount?.ToString("N0") VNĐ</div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="mt-8 text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">Chưa có đơn hàng nào</h3>
+                <p class="mt-1 text-sm text-gray-500">Coupon này chưa được sử dụng trong bất kỳ đơn hàng nào.</p>
+            </div>
+        }
+
+        <!-- Action Buttons -->
+        <div class="mt-8 flex justify-center space-x-4">
+            <a href="@Url.Action("Index")" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-200">
+                Quay lại danh sách
+            </a>
+            <a href="@Url.Action("Edit", new { id = Model.CouponId })" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-200">
+                Chỉnh sửa coupon
+            </a>
+        </div>
+    </div>
+</div>

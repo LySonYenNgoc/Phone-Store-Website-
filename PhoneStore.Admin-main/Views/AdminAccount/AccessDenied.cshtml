@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "Không có quyền truy cập";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PhoneStore</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/access-denied.css" />
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Override any potential padding from other CSS */
+        .container-fluid {
+            padding: 0 !important;
+        }
+        
+        /* Ensure no text decoration */
+        a, button {
+            text-decoration: none !important;
+        }
+        
+        a:hover, a:focus, a:active, 
+        button:hover, button:focus, button:active {
+            text-decoration: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-0" style="min-height: 100vh; background: linear-gradient(135deg, #fef2f2 0%, #fef3f2 100%);">
+        <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh; padding: 2rem 1rem;">
+            <div class="text-center" style="max-width: 500px; width: 100%;">
+
+                <!-- Icon Lock -->
+                <div class="mb-4">
+                    <div class="access-denied-icon mx-auto d-flex align-items-center justify-content-center rounded-circle bg-danger bg-opacity-10" style="width: 100px; height: 100px;">
+                        <i class="fas fa-lock text-danger" style="font-size: 2.5rem;"></i>
+                    </div>
+                </div>
+
+                <!-- Tiêu đề chính -->
+                <h1 class="h2 fw-bold text-dark mb-2">Truy cập bị từ chối</h1>
+                <div class="mx-auto bg-danger rounded" style="width: 60px; height: 4px;"></div>
+
+                <!-- Thông báo -->
+                <div class="card border-0 shadow-sm mt-4 mb-4">
+                    <div class="card-body p-4">
+                        <div class="alert alert-danger mb-3" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Bạn không có quyền truy cập</strong>
+                        </div>
+                        <p class="text-muted mb-3">
+                            Xin lỗi, bạn không có quyền truy cập vào trang này. Vui lòng liên hệ quản trị viên để được cấp quyền phù hợp.
+                        </p>
+                        <div class="alert alert-info mb-0" role="alert">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <small>Mã lỗi: 403 - Forbidden Access</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nút hành động -->
+                <div class="d-grid gap-3">
+                    <button onclick="window.history.back()" class="btn btn-primary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Quay lại trang trước
+                    </button>
+
+                    <a href="@Url.Action("Index", "Dashboard")" class="btn btn-outline-secondary text-decoration-none">
+                        <i class="fas fa-home me-2"></i>
+                        Về trang chủ quản trị
+                    </a>
+                </div>
+
+                <!-- Liên hệ hỗ trợ -->
+                <div class="mt-4 pt-3 border-top">
+                    <p class="text-muted small mb-2">Cần hỗ trợ?</p>
+                    <a href="mailto:admin@phonestore.com" class="text-decoration-none">
+                        <i class="fas fa-envelope me-1"></i>
+                        Liên hệ quản trị viên
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script src="~/js/access-denied.js"></script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+@model PhoneStore.Models.Coupon
+@using PhoneStore.Controllers
+
+@{
+    ViewData["Title"] = "Chỉnh sửa Coupon";
+    var isUsed = Model.IsUsed == true;
+    var isExpired = Model.ExpiryDate <= DateTime.Now;
+    var status = CouponController.GetCouponStatus(Model);
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center mb-6">
+            <a href="@Url.Action("Index")" class="text-blue-600 hover:text-blue-800 mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+            </a>
+            <h1 class="text-3xl font-bold text-gray-800">Chỉnh sửa Coupon</h1>
+        </div>
+
+        <!-- Status Alert -->
+        @if (status == "expired")
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <strong>Cảnh báo:</strong> Coupon này đã hết hạn. Một số thông tin có thể không thể chỉnh sửa.
+            </div>
+        }
+        else if (status == "used")
+        {
+            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-4">
+                <strong>Thông báo:</strong> Coupon này đã được sử dụng. Hãy cẩn thận khi chỉnh sửa.
+            </div>
+        }
+
+        <form asp-action="Edit" method="post" class="space-y-6">
+            <div asp-validation-summary="ModelOnly" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"></div>
+
+            <input type="hidden" asp-for="CouponId" />
+            <input type="hidden" asp-for="CreatedDate" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="Code" class="block text-sm font-medium text-gray-700 mb-2">Mã Coupon</label>                    <input asp-for="Code" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Nhập mã coupon" readonly="@isUsed" />
+                    <span asp-validation-for="Code" class="text-red-500 text-sm"></span>
+                    @if (isUsed)
+                    {
+                        <p class="text-sm text-gray-500 mt-1">Không thể thay đổi mã coupon đã sử dụng</p>
+                    }
+                </div>
+
+                <div>
+                    <label asp-for="DiscountAmount" class="block text-sm font-medium text-gray-700 mb-2">Số tiền giảm (VNĐ)</label>
+                    <input asp-for="DiscountAmount" type="number" step="1000" min="1000"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Nhập số tiền giảm" readonly="@isUsed" />
+                    <span asp-validation-for="DiscountAmount" class="text-red-500 text-sm"></span>
+                    @if (isUsed)
+                    {
+                        <p class="text-sm text-gray-500 mt-1">Không thể thay đổi số tiền giảm của coupon đã sử dụng</p>
+                    }
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="ExpiryDate" class="block text-sm font-medium text-gray-700 mb-2">Ngày hết hạn</label>
+                    <input asp-for="ExpiryDate" type="datetime-local"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    <span asp-validation-for="ExpiryDate" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái hiện tại</label>
+                    <div class="flex items-center h-10">
+                        <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full @CouponController.GetCouponStatusClass(Model)">
+                            @CouponController.GetCouponStatusText(Model)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Usage Information -->
+            <div class="bg-gray-50 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-gray-800 mb-3">Thông tin sử dụng</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <label class="block text-gray-600">Ngày tạo</label>
+                        <p class="font-medium">@Model.CreatedDate?.ToString("dd/MM/yyyy HH:mm")</p>
+                    </div>
+                    <div>
+                        <label class="block text-gray-600">Trạng thái</label>
+                        <div class="flex items-center space-x-2">
+                            <input asp-for="IsUsed" type="checkbox" class="rounded" disabled="@isExpired" />
+                            <label asp-for="IsUsed" class="text-gray-700">Đã sử dụng</label>
+                        </div>
+                        @if (isExpired)
+                        {
+                            <p class="text-xs text-gray-500 mt-1">Không thể thay đổi trạng thái coupon hết hạn</p>
+                        }
+                    </div>
+                    <div>
+                        <label class="block text-gray-600">Ngày sử dụng</label>
+                        <input asp-for="UsedDate" type="datetime-local"
+                               class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                               readonly="@(Model.IsUsed != true)" />
+                        @if (Model.IsUsed != true)
+                        {
+                            <p class="text-xs text-gray-500 mt-1">Chỉ hiển thị khi coupon được sử dụng</p>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guidelines -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-blue-800 mb-2">Hướng dẫn chỉnh sửa</h3>
+                <ul class="text-sm text-blue-700 space-y-1">
+                    <li>• Mã coupon phải là duy nhất trong hệ thống</li>
+                    <li>• Số tiền giảm phải lớn hơn 0</li>
+                    <li>• Ngày hết hạn có thể được gia hạn cho coupon chưa sử dụng</li>
+                    <li>• Coupon đã sử dụng không thể thay đổi mã và số tiền giảm</li>
+                    <li>• Coupon hết hạn không thể thay đổi trạng thái sử dụng</li>
+                </ul>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="@Url.Action("Index")" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-200">
+                    Hủy
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-200">
+                    Cập nhật Coupon
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const isUsedCheckbox = document.querySelector('input[name="IsUsed"]');
+            const usedDateInput = document.querySelector('input[name="UsedDate"]');
+
+            function toggleUsedDate() {
+                if (isUsedCheckbox.checked) {
+                    usedDateInput.readOnly = false;
+                    if (!usedDateInput.value) {
+                        const now = new Date();
+                        usedDateInput.value = now.toISOString().slice(0, 16);
+                    }
+                } else {
+                    usedDateInput.readOnly = true;
+                    usedDateInput.value = '';
+                }
+            }
+
+            isUsedCheckbox.addEventListener('change', toggleUsedDate);
+            toggleUsedDate(); // Initialize
+        });
+    </script>
+}

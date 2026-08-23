@@ -1,0 +1,548 @@
+@{
+    ViewData["Title"] = "Tổng quan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Thêm Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Tổng quan hệ thống</h1>
+            <p class="text-gray-600">Xem thống kê và hoạt động gần đây - <span class="italic text-sm">Cập nhật lần cuối: @DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")</span></p>
+        </div>
+        <div>
+            <a href="@Url.Action("GenerateFakeOrders")" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Tạo đơn hàng mẫu
+            </a>
+        </div>
+    </div>
+
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4 animate-pulse" role="alert">
+            <span class="block sm:inline">@TempData["Message"]</span>
+            <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Đóng</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </button>
+        </div>
+    }
+
+    @if (TempData["Info"] != null)
+    {
+        <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">@TempData["Info"]</span>
+            <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                <svg class="fill-current h-6 w-6 text-blue-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Đóng</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 animate-pulse" role="alert">
+            <span class="block sm:inline">@TempData["Error"]</span>
+            <button type="button" class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display='none'">
+                <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Đóng</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+            </button>
+        </div>
+    }
+
+    <!-- Thẻ thống kê tổng quan -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Thẻ tài khoản -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Tài khoản</p>
+                    <div class="flex items-center">
+                        <p class="text-2xl font-bold text-gray-800">@ViewBag.TotalAdmins</p>
+                        <span class="ml-2 text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                            @ViewBag.ActiveAdmins đang hoạt động
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4">
+                @if (ViewBag.PendingAdmins != null && ViewBag.PendingAdmins.Count > 0)
+                {
+                    <div class="bg-yellow-50 rounded p-3 text-sm">
+                        <p class="font-medium text-yellow-800">@ViewBag.PendingAdmins.Count tài khoản đang chờ duyệt</p>
+                        <a href="/AdminAccount/Index" class="text-yellow-600 hover:underline mt-1 inline-block">Xem danh sách</a>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-sm text-gray-500">Không có tài khoản nào đang chờ duyệt</p>
+                }
+            </div>
+        </div>
+
+        <!-- Thẻ khách hàng -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Khách hàng</p>
+                    <p class="text-2xl font-bold text-gray-800">@ViewBag.TotalCustomers</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <a href="#" class="text-green-600 hover:underline text-sm">Xem danh sách khách hàng</a>
+            </div>
+        </div>
+
+        <!-- Thẻ sản phẩm -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Sản phẩm</p>
+                    <p class="text-2xl font-bold text-gray-800">@ViewBag.TotalProducts</p>
+                </div>
+            </div>
+            <div class="mt-4 space-y-2">
+                @if (ViewBag.LowStockProducts > 0)
+                {
+                    <div class="bg-yellow-50 rounded p-2 text-xs">
+                        <span class="font-medium text-yellow-800">@ViewBag.LowStockProducts sản phẩm sắp hết hàng</span>
+                    </div>
+                }
+                @if (ViewBag.OutOfStockProducts > 0)
+                {
+                    <div class="bg-red-50 rounded p-2 text-xs">
+                        <span class="font-medium text-red-800">@ViewBag.OutOfStockProducts sản phẩm hết hàng</span>
+                    </div>
+                }
+                <a href="/Product/Index" class="text-purple-600 hover:underline text-sm">Quản lý sản phẩm</a>
+            </div>
+        </div>
+
+        <!-- Thẻ đơn hàng và doanh thu -->
+        <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
+            <div class="flex items-center">
+                <div class="p-3 rounded-full bg-orange-100 text-orange-600 mr-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Đơn hàng</p>
+                    <p class="text-2xl font-bold text-gray-800">@ViewBag.TotalOrders</p>
+                </div>
+            </div>
+            <div class="mt-2">
+                <div class="bg-green-50 rounded p-2 text-xs mb-2">
+                    <span class="font-medium text-green-800">Tổng doanh thu: @String.Format("{0:N0}", ViewBag.TotalRevenue) VNĐ</span>
+                </div>
+                <a href="#" class="text-orange-600 hover:underline text-sm">Xem tất cả đơn hàng</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ và thống kê -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Biểu đồ doanh thu tháng -->
+        <div class="bg-white rounded-lg shadow-md p-4">
+            <h2 class="text-lg font-medium text-gray-800 mb-4">Doanh thu 6 tháng gần đây</h2>
+            <div class="h-80">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Biểu đồ doanh thu ngày -->
+        <div class="bg-white rounded-lg shadow-md p-4">
+            <h2 class="text-lg font-medium text-gray-800 mb-4">
+                <a href="@Url.Action("Index", "Order", new { filterDays = 7 })" id="filter7days" class="hover:text-blue-600 hover:underline cursor-pointer" title="Click để tính/xem chi tiết đơn hàng 7 ngày qua">
+                    Doanh thu 7 ngày gần đây
+                </a>
+            </h2>
+            <div class="h-80">
+                <canvas id="dailyRevenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Thống kê danh mục -->
+        <div class="bg-white rounded-lg shadow-md p-4">
+            <h2 class="text-lg font-medium text-gray-800 mb-4">Danh mục phổ biến</h2>
+            <div class="h-80">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Sản phẩm bán chạy -->
+        <div class="bg-white rounded-lg shadow-md p-4">
+            <h2 class="text-lg font-medium text-gray-800 mb-4">Sản phẩm bán chạy</h2>
+            <div class="h-80">
+                <canvas id="topProductsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Đơn hàng gần đây -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-medium text-gray-800">Đơn hàng gần đây</h2>
+            <a href="#" class="text-blue-600 hover:underline text-sm">Xem tất cả</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã đơn</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày đặt</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng tiền</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @if (ViewBag.RecentOrders != null && ViewBag.RecentOrders.Count > 0)
+                    {
+                        @foreach (var order in ViewBag.RecentOrders)
+                        {
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#@order.OrderId</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    @(order.Customer?.Name ?? "Không có thông tin")
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    @(order.OrderDate?.ToString("dd/MM/yyyy HH:mm") ?? "Không có")
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    @(String.Format("{0:N0}", order.TotalAmount)) VNĐ
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @{
+                                        var statusClass = order.Status switch
+                                        {
+                                            "Đang xử lý" => "bg-yellow-100 text-yellow-800",
+                                            "Đã xác nhận" => "bg-blue-100 text-blue-800",
+                                            "Đang giao hàng" => "bg-indigo-100 text-indigo-800",
+                                            "Đã giao hàng" => "bg-green-100 text-green-800",
+                                            "Đã hủy" => "bg-red-100 text-red-800",
+                                            _ => "bg-gray-100 text-gray-800"
+                                        };
+                                    }
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full @statusClass">
+                                        @(order.Status ?? "Không xác định")
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="@Url.Action("Details", "Order", new { id = order.OrderId })" class="text-indigo-600 hover:text-indigo-900">
+                                        Chi tiết
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                Không có đơn hàng nào gần đây
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="bg-gray-50 px-6 py-3 border-t border-gray-200 text-right">
+                <a href="@Url.Action("Index", "Order")" class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-900">
+                    Xem tất cả đơn hàng
+                    <svg class="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Biểu đồ doanh thu tháng
+        var revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        var revenueChart = new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: [@Html.Raw(ViewBag.ChartMonths)],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: [@ViewBag.ChartRevenueData],
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Số đơn hàng',
+                    data: [@ViewBag.ChartOrderCountData],
+                    backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                    borderColor: 'rgba(236, 72, 153, 1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: false,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.dataset.label || '';
+                                var value = context.raw;
+                                if (label.includes('Doanh thu')) {
+                                    return label + ': ' + value.toLocaleString('vi-VN') + ' VNĐ';
+                                } else {
+                                    return label + ': ' + value;
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Doanh thu (VNĐ)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN');
+                            }
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Số đơn hàng'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        }
+                    }
+                }
+            }
+        });
+
+        // Biểu đồ doanh thu ngày
+        var dailyRevenueCtx = document.getElementById('dailyRevenueChart').getContext('2d');
+        var dailyRevenueChart = new Chart(dailyRevenueCtx, {
+            type: 'bar',
+            data: {
+                labels: [@Html.Raw(ViewBag.ChartDays)],
+                datasets: [{
+                    label: 'Doanh thu (VNĐ)',
+                    data: [@ViewBag.ChartDailyRevenueData],
+                    backgroundColor: 'rgba(16, 185, 129, 0.6)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 1,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Số đơn hàng',
+                    data: [@ViewBag.ChartDailyOrderCountData],
+                    type: 'line',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.4,
+                    yAxisID: 'y1'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.dataset.label || '';
+                                var value = context.raw;
+                                if (label.includes('Doanh thu')) {
+                                    return label + ': ' + value.toLocaleString('vi-VN') + ' VNĐ';
+                                } else {
+                                    return label + ': ' + value;
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Doanh thu (VNĐ)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('vi-VN');
+                            }
+                        }
+                    },
+                    y1: {
+                        beginAtZero: true,
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Số đơn hàng'
+                        },
+                        grid: {
+                            drawOnChartArea: false,
+                        }
+                    }
+                }
+            }
+        });
+
+        // Biểu đồ danh mục
+        var categoryData = @Html.Raw(Json.Serialize(ViewBag.CategoryData));
+        var categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        var categoryChart = new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: categoryData.map(item => item.categoryName),
+                datasets: [{
+                    data: categoryData.map(item => item.count),
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.8)',
+                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(107, 114, 128, 0.8)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var label = context.label || '';
+                                var value = context.raw;
+                                var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                var percentage = Math.round((value / total) * 100);
+                                return label + ': ' + value + ' sản phẩm (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Biểu đồ sản phẩm bán chạy
+        var topProductsData = @Html.Raw(Json.Serialize(ViewBag.TopProducts));
+        var topProductsCtx = document.getElementById('topProductsChart').getContext('2d');
+        var topProductsChart = new Chart(topProductsCtx, {
+            type: 'bar',
+            data: {
+                labels: topProductsData.map(item => item.productName),
+                datasets: [{
+                    label: 'Số lượng đã bán',
+                    data: topProductsData.map(item => item.quantity),
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.6)',
+                        'rgba(236, 72, 153, 0.6)',
+                        'rgba(16, 185, 129, 0.6)',
+                        'rgba(245, 158, 11, 0.6)',
+                        'rgba(107, 114, 128, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(99, 102, 241, 1)',
+                        'rgba(236, 72, 153, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(107, 114, 128, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                var value = context.raw;
+                                return 'Đã bán: ' + value + ' sản phẩm';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Số lượng đã bán'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,187 @@
+@model PhoneStore.Customer.ViewModels.CartViewModel
+
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">Giỏ hàng của bạn</h1>
+
+    @if (Model.Items.Count == 0)
+    {
+        <div class="text-center py-16">
+            <svg class="mx-auto h-24 w-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M3 3h2l.4 2M7 13h10l4-8H5.4m1.6 8L6 21h12M9 19h6M8 19a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
+            </svg>
+            <h2 class="mt-4 text-2xl font-medium text-gray-900">Giỏ hàng trống</h2>
+            <p class="mt-2 text-gray-500">Chưa có sản phẩm nào trong giỏ hàng của bạn</p>
+            <a href="/product" class="mt-6 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                Tiếp tục mua sắm
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="lg:grid lg:grid-cols-12 lg:gap-x-12 lg:items-start xl:gap-x-16">
+            <!-- Cart Items -->
+            <section class="lg:col-span-7">
+                <ul class="border-t border-b border-gray-200 divide-y divide-gray-200">
+                    @foreach (var item in Model.Items)
+                    {
+                        <li class="flex py-6 sm:py-10" data-product-id="@item.ProductId">
+                            <div class="flex-shrink-0">
+                                <img src="@(item.ImageUrl ?? "/images/no-image.jpg")" alt="@item.ProductName"
+                                     class="w-24 h-24 rounded-lg object-cover sm:w-32 sm:h-32">
+                            </div>
+
+                            <div class="ml-4 flex-1 flex flex-col justify-between sm:ml-6">
+                                <div class="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+                                    <div>
+                                        <div class="flex justify-between">
+                                            <h3 class="text-sm">
+                                                <a href="/product/detail/@item.ProductId" class="font-medium text-gray-700 hover:text-gray-800">
+                                                    @item.ProductName
+                                                </a>
+                                            </h3>
+                                        </div>
+                                        <p class="mt-1 text-sm font-medium text-gray-900">@item.Price.ToString("N0") VNĐ</p>
+                                    </div>
+
+                                    <div class="mt-4 sm:mt-0 sm:pr-9">
+                                        <div class="flex items-center border border-gray-300 rounded">
+                                            <button type="button" class="px-2 py-1 text-gray-600 hover:text-gray-800"
+                                                    onclick="updateQuantity(@item.ProductId, @(item.Quantity - 1))">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                                                </svg>
+                                            </button>
+                                            <input type="number" value="@item.Quantity" min="1"
+                                                   class="w-16 text-center border-0 focus:ring-0 focus:outline-none"
+                                                   onchange="updateQuantity(@item.ProductId, this.value)">
+                                            <button type="button" class="px-2 py-1 text-gray-600 hover:text-gray-800"
+                                                    onclick="updateQuantity(@item.ProductId, @(item.Quantity + 1))">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+
+                                        <div class="absolute top-0 right-0">
+                                            <button type="button" class="-m-2 p-2 inline-flex text-gray-400 hover:text-gray-500"
+                                                    onclick="removeItem(@item.ProductId)">
+                                                <span class="sr-only">Remove</span>
+                                                <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="mt-4 flex text-sm text-gray-700 space-x-2">
+                                    <span class="font-medium">Thành tiền:</span>
+                                    <span class="font-bold text-lg">@item.Total.ToString("N0") VNĐ</span>
+                                </p>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </section>
+
+            <!-- Order summary -->
+            <section class="mt-16 bg-gray-50 rounded-lg px-4 py-6 sm:p-6 lg:p-8 lg:mt-0 lg:col-span-5">
+                <h2 class="text-lg font-medium text-gray-900">Tóm tắt đơn hàng</h2>
+
+                <dl class="mt-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <dt class="text-sm text-gray-600">Tạm tính</dt>
+                        <dd class="text-sm font-medium text-gray-900" id="subtotal">@Model.Total.ToString("N0") VNĐ</dd>
+                    </div>
+                    <div class="flex items-center justify-between border-t border-gray-200 pt-4">
+                        <dt class="text-base font-medium text-gray-900">Tổng cộng</dt>
+                        <dd class="text-base font-medium text-gray-900" id="total">@Model.Total.ToString("N0") VNĐ</dd>
+                    </div>
+                </dl>
+
+                <div class="mt-6">
+                    <a href="/checkout" class="w-full bg-blue-600 border border-transparent rounded-md shadow-sm py-3 px-4 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-blue-500 flex justify-center items-center">
+                        Thanh toán
+                    </a>
+                </div>
+
+                <div class="mt-6 flex justify-center text-sm text-center text-gray-500">
+                    <p>
+                        hoặc
+                        <a href="/product" class="text-blue-600 font-medium hover:text-blue-500">
+                            Tiếp tục mua sắm<span aria-hidden="true"> &rarr;</span>
+                        </a>
+                    </p>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="clearCart()" class="w-full bg-red-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-red-700">
+                        Xóa toàn bộ giỏ hàng
+                    </button>
+                </div>
+            </section>
+        </div>
+    }
+</div>
+
+<script>
+function updateQuantity(productId, quantity) {
+    quantity = parseInt(quantity);
+    if (quantity < 1) return;
+
+    fetch('/cart/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `productId=${productId}&quantity=${quantity}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            showNotification(data.message || 'Có lỗi xảy ra!', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Có lỗi xảy ra!', 'error');
+    });
+}
+
+function removeItem(productId) {
+    if (!confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?')) return;
+
+    fetch('/cart/remove', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `productId=${productId}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+            updateCartCount();
+        } else {
+            showNotification(data.message || 'Có lỗi xảy ra!', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Có lỗi xảy ra!', 'error');
+    });
+}
+
+function clearCart() {
+    if (!confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?')) return;
+
+    window.location.href = '/cart/clear';
+}
+</script>

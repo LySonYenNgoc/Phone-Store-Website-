@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Cart Functionality</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Test Product Card Actions</h1>
+
+        <!-- Cart Count Display -->
+        <div class="bg-white p-4 rounded-lg shadow mb-8">
+            <h2 class="text-xl font-semibold mb-4">Cart Status</h2>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <i class="fas fa-shopping-cart text-2xl text-blue-600"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                </div>
+                <span class="text-gray-600">Cart Items</span>
+            </div>
+        </div>
+
+        <!-- Test Product Card -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all">
+            <div class="relative group">
+                <img src="https://via.placeholder.com/300x300/EEE/999?text=Test+Product"
+                     alt="Test Product"
+                     class="w-full h-64 object-cover">
+
+                <!-- Quick Actions -->
+                <div class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onclick="addToWishlist(1, 'Test Product')"
+                            class="bg-white text-gray-600 hover:text-red-500 p-2 rounded-full shadow-lg transition-colors"
+                            title="Thêm vào yêu thích">
+                        <i class="far fa-heart"></i>
+                    </button>
+                    <button onclick="quickView(1, 'Test Product')"
+                            class="bg-white text-gray-600 hover:text-blue-500 p-2 rounded-full shadow-lg transition-colors"
+                            title="Xem nhanh">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Add to Cart -->
+                <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onclick="addToCart(1, 'Test Product', 25000000)"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-cart-plus mr-2"></i>
+                        Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <h3 class="font-semibold text-lg text-gray-900 mb-2">Test Product</h3>
+                <p class="text-gray-600 text-sm mb-3">This is a test product for cart functionality</p>
+
+                <!-- Price -->
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-2xl font-bold text-gray-900">25,000,000 ₫</span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center justify-between">
+                    <button onclick="addToWishlist(1, 'Test Product')"
+                            class="text-gray-600 hover:text-red-500 p-2 transition-colors"
+                            title="Thêm vào yêu thích">
+                        <i class="far fa-heart text-xl"></i>
+                    </button>
+                    <button onclick="addToCart(1, 'Test Product', 25000000)"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-cart-plus mr-2"></i>
+                        Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Test Buttons -->
+        <div class="bg-white p-6 rounded-lg shadow mt-8">
+            <h2 class="text-xl font-semibold mb-4">API Tests</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="testCartCount()"
+                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg">
+                    Test Cart Count API
+                </button>
+                <button onclick="testAddToCart()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                    Test Add to Cart API
+                </button>
+                <button onclick="testCartPage()"
+                        class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">
+                    Open Cart Page
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/site.js"></script>
+    <script>
+        function testCartCount() {
+            fetch('/Cart/GetCount')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Cart Count API Response:', data);
+                    alert('Cart Count: ' + data.count);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error testing cart count API');
+                });
+        }
+
+        function testAddToCart() {
+            fetch('/Cart/Add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productId: 1,
+                    quantity: 1
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Add to Cart API Response:', data);
+                alert('Add to Cart Result: ' + (data.success ? 'Success' : 'Failed'));
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error testing add to cart API');
+            });
+        }
+
+        function testCartPage() {
+            window.open('/Cart', '_blank');
+        }
+    </script>
+</body>
+</html>

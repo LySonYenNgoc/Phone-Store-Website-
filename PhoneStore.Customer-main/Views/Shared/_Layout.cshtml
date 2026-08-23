@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PhoneStore</title>
+    <meta name="description" content="@ViewData["Description"]" />
+    @Html.AntiForgeryToken()
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0">
+                    <a asp-controller="Home" asp-action="Index" class="flex items-center space-x-2">
+                        <i class="fas fa-mobile-alt text-2xl text-primary-600"></i>
+                        <span class="text-xl font-bold text-gray-900">PhoneStore</span>
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a asp-controller="Home" asp-action="Index"
+                           class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Trang chủ
+                        </a>
+                        <a asp-controller="Product" asp-action="Index"
+                           class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Sản phẩm
+                        </a>
+                        <a asp-controller="Home" asp-action="About" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Về chúng tôi
+                        </a>
+                        <a asp-controller="Home" asp-action="Contact" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            Liên hệ
+                        </a>
+                    </div>
+                </div>                <!-- Right Side -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <!-- Search -->
+                    <div class="relative">
+                        <input type="text" placeholder="Tìm kiếm..."
+                               class="bg-gray-100 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all">
+                        <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    </div>
+
+                    <!-- Cart -->
+                    <a asp-controller="Cart" asp-action="Index" class="relative text-gray-700 hover:text-primary-600 transition-colors">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </a>
+
+                    <!-- Authentication Section -->
+                    @if (Context.Session.GetString("CustomerId") != null)
+                    {
+                        <div class="relative">
+                            <button id="user-menu-btn" class="flex items-center space-x-2 text-gray-700 hover:text-primary-600 transition-colors">
+                                <i class="fas fa-user-circle text-xl"></i>
+                                <span class="text-sm font-medium">@Context.Session.GetString("CustomerName")</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+
+
+                            <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 hidden">
+                                <a asp-controller="Customer" asp-action="Profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-user mr-2"></i>Thông tin cá nhân
+                                </a>
+                                <a asp-controller="Customer" asp-action="Orders" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-shopping-bag mr-2"></i>Đơn hàng của tôi
+                                </a>
+                                <a asp-controller="Warranty" asp-action="Index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-shield-alt mr-2"></i>Quản lý bảo hành
+                                </a>
+                                <div class="border-t border-gray-100"></div>
+                                <form asp-controller="Customer" asp-action="Logout" method="post" class="block">
+                                    <button id="header-logout-btn" type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>Đăng xuất
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- User is not logged in -->
+                        <div class="flex items-center space-x-2">
+                            <a id="header-login-link" asp-controller="Customer" asp-action="Login"
+                               class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-sign-in-alt mr-1"></i>Đăng nhập
+                            </a>
+                            <a id="header-register-link" asp-controller="Customer" asp-action="Register"
+                               class="bg-primary-600 text-white hover:bg-primary-700 px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                                <i class="fas fa-user-plus mr-1"></i>Đăng ký
+                            </a>
+                        </div>
+                    }
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="mobile-menu-btn text-gray-700 hover:text-primary-600 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>        <!-- Mobile Menu -->
+        <div class="md:hidden mobile-menu hidden">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white border-t">
+                <a asp-controller="Home" asp-action="Index" class="block text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                    Trang chủ
+                </a>
+                <a asp-controller="Product" asp-action="Index" class="block text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                    Sản phẩm
+                </a>
+                <a asp-controller="Home" asp-action="About" class="block text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                    Về chúng tôi
+                </a>
+                <a asp-controller="Home" asp-action="Contact" class="block text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                    Liên hệ
+                </a>
+
+                <!-- Mobile Authentication Section -->
+                <div class="border-t pt-3 mt-3">
+                    @if (Context.Session.GetString("CustomerId") != null)
+                    {
+                        <div class="px-3 py-2 text-sm text-gray-500">
+                            Xin chào, <span class="font-medium text-gray-700">@Context.Session.GetString("CustomerName")</span>
+                        </div>
+                        <a asp-controller="Customer" asp-action="Profile" class="block text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                            <i class="fas fa-user mr-2"></i>Thông tin cá nhân
+                        </a>
+                        <a asp-controller="Customer" asp-action="Orders" class="block text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                            <i class="fas fa-shopping-bag mr-2"></i>Đơn hàng của tôi
+                        </a>
+                        <a asp-controller="Warranty" asp-action="Index" class="block text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                            <i class="fas fa-shield-alt mr-2"></i>Quản lý bảo hành
+                        </a>
+                        <form asp-controller="Customer" asp-action="Logout" method="post" class="block">
+                            <button type="submit" class="w-full text-left text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Đăng xuất
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Customer" asp-action="Login" class="block text-gray-700 hover:text-primary-600 px-3 py-2 text-base font-medium">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Đăng nhập
+                        </a>
+                        <a asp-controller="Customer" asp-action="Register" class="block bg-primary-600 text-white hover:bg-primary-700 mx-3 my-2 px-3 py-2 rounded-md text-base font-medium text-center">
+                            <i class="fas fa-user-plus mr-2"></i>Đăng ký
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white" id="footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-mobile-alt text-2xl text-primary-500"></i>
+                        <span class="text-xl font-bold">PhoneStore</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">
+                        Cửa hàng điện thoại uy tín với đa dạng sản phẩm chính hãng,
+                        giá cả hợp lý và dịch vụ chăm sóc khách hàng tận tâm.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Liên kết nhanh</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Trang chủ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Sản phẩm</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="text-gray-400 hover:text-white transition-colors">Về chúng tôi</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact" class="text-gray-400 hover:text-white transition-colors">Liên hệ</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Liên hệ</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Đường ABC, Quận 1, TP.HCM</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-phone"></i>
+                            <span>0123 456 789</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-envelope"></i>
+                            <span>info@phonestore.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 PhoneStore. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>    </footer>    <!-- Quick View Modal -->
+    <div id="quickViewModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4" aria-hidden="true">
+        <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="flex justify-between items-center p-4 md:p-6 border-b sticky top-0 bg-white z-10">
+                <h2 class="text-xl md:text-2xl font-bold text-gray-900">Xem nhanh sản phẩm</h2>
+                <button onclick="hideQuickViewModal()" class="text-gray-400 hover:text-gray-600 text-2xl p-2 rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content -->
+            <div id="quickViewContent" class="p-4 md:p-6">
+                <!-- Loading State -->
+                <div id="quickViewLoading" class="text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-primary-600 mb-4"></i>
+                    <p class="text-gray-600">Đang tải thông tin sản phẩm...</p>
+                </div>
+
+                <!-- Product Content (Hidden initially) -->
+                <div id="quickViewProduct" class="hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                        <!-- Product Images -->
+                        <div class="space-y-4">
+                            <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                                <img id="quickViewMainImage" src="" alt="" class="w-full h-full object-cover">
+                            </div>
+                            <div id="quickViewThumbnails" class="flex space-x-2 overflow-x-auto pb-2">
+                                <!-- Thumbnails will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="space-y-4 md:space-y-6">
+                            <div>
+                                <h1 id="quickViewProductName" class="text-2xl md:text-3xl font-bold text-gray-900 mb-2"></h1>
+                                <p id="quickViewCategoryName" class="text-gray-600"></p>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="space-y-2">
+                                <div class="flex items-center space-x-4 flex-wrap">
+                                    <span id="quickViewCurrentPrice" class="text-2xl md:text-3xl font-bold text-primary-600"></span>
+                                    <span id="quickViewOriginalPrice" class="text-lg md:text-xl text-gray-500 line-through hidden"></span>
+                                    <span id="quickViewDiscount" class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm font-medium hidden"></span>
+                                </div>
+                            </div>
+
+                            <!-- Stock Status -->
+                            <div id="quickViewStock" class="flex items-center space-x-2">
+                                <i class="fas fa-check-circle text-green-500"></i>
+                                <span class="text-green-600 font-medium">Còn hàng</span>
+                                <span id="quickViewStockQuantity" class="text-gray-500"></span>
+                            </div>
+
+                            <!-- Description -->
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Mô tả sản phẩm</h3>
+                                <p id="quickViewDescription" class="text-gray-600 leading-relaxed text-sm md:text-base"></p>
+                            </div>
+
+                            <!-- Color Selection -->
+                            <div id="quickViewColorSection" class="hidden">
+                                <h3 class="text-lg font-semibold text-gray-900 mb-2">Màu sắc:</h3>
+                                <div id="quickViewColors" class="flex items-center space-x-2 flex-wrap gap-2">
+                                    <!-- Colors will be populated by JavaScript -->
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="space-y-4">
+                                <!-- Quantity Selector -->
+                                <div class="flex items-center space-x-4">
+                                    <label class="text-gray-700 font-medium text-sm md:text-base">Số lượng:</label>
+                                    <div class="flex items-center border border-gray-300 rounded-lg">
+                                        <button type="button" onclick="decreaseQuantity()" class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-colors">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                        <input type="number" id="quickViewQuantity" value="1" min="1" class="w-16 text-center border-0 focus:outline-none text-sm md:text-base">
+                                        <button type="button" onclick="increaseQuantity()" class="px-3 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-50 transition-colors">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                                    <button id="quickViewAddToCart"
+                                            class="flex-1 bg-primary-600 text-white px-4 md:px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2 text-sm md:text-base">
+                                        <i class="fas fa-shopping-cart"></i>
+                                        <span>Thêm vào giỏ hàng</span>
+                                    </button>
+                                    <button id="quickViewAddToWishlist"
+                                            class="px-4 md:px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm md:text-base">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+
+                                <!-- View Full Details -->
+                                <a id="quickViewDetailsLink" href="#"
+                                   class="block w-full text-center bg-gray-100 text-gray-700 px-4 md:px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors text-sm md:text-base">
+                                    Xem chi tiết đầy đủ
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

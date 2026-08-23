@@ -1,0 +1,199 @@
+@model PhoneStore.Customer.ViewModels.OrderConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Xác nhận đơn hàng";
+}
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Success Header -->
+    <div class="text-center mb-8">
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+            <i class="fas fa-check text-2xl text-green-600"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900">Đặt hàng thành công!</h1>
+        <p class="mt-2 text-lg text-gray-600">Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đang được xử lý.</p>
+    </div>
+
+    <!-- Order Information -->
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Order Header -->
+        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-900">Đơn hàng @Model.OrderNumber</h2>
+                    <p class="text-sm text-gray-600">Đặt ngày: @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+                <div class="mt-2 sm:mt-0">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                        @Model.Status
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Order Details -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Chi tiết đơn hàng</h3>
+
+                    <!-- Order Items -->
+                    <div class="space-y-4 mb-6">
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="flex items-center space-x-4 py-4 border-b border-gray-200 last:border-b-0">
+                                <div class="flex-shrink-0 w-16 h-16 border border-gray-200 rounded-md overflow-hidden">
+                                    <img src="@(item.ImageUrl ?? "/images/no-image.jpg")" alt="@item.ProductName"
+                                         class="w-full h-full object-center object-cover">
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-sm font-medium text-gray-900">@item.ProductName</h4>
+                                    <p class="text-sm text-gray-600">Số lượng: @item.Quantity</p>
+                                    <p class="text-sm font-medium text-gray-900">@item.Price.ToString("N0") VNĐ</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-gray-900">@item.Total.ToString("N0") VNĐ</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Order Total -->
+                    <div class="border-t border-gray-200 pt-4">
+                        <div class="flex justify-between text-lg font-bold text-gray-900">
+                            <span>Tổng cộng:</span>
+                            <span>@Model.TotalAmount.ToString("N0") VNĐ</span>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="text-sm font-medium text-gray-900 mb-2">Phương thức thanh toán</h4>
+                        <p class="text-sm text-gray-600">@Model.PaymentMethod</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <!-- Order Notes -->
+                        <div class="mt-4 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-900 mb-2">Ghi chú</h4>
+                            <p class="text-sm text-gray-600">@Model.Notes</p>
+                        </div>
+                    }
+                </div>
+
+                <!-- Shipping & Customer Information -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Thông tin giao hàng</h3>
+
+                    @if (Model.Customer != null)
+                    {
+                        <!-- Customer Information -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-900 mb-3">Thông tin khách hàng</h4>
+                            <div class="space-y-2">
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-medium">Tên:</span> @Model.Customer.Name
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-medium">Email:</span> @Model.Customer.Email
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-medium">Điện thoại:</span> @Model.Customer.Phone
+                                </p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.ShippingAddress != null)
+                    {
+                        <!-- Shipping Address -->
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <h4 class="text-sm font-medium text-gray-900 mb-3">Địa chỉ giao hàng</h4>
+                            <div class="space-y-2">
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-medium">Người nhận:</span> @Model.ShippingAddress.RecipientName
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-medium">Điện thoại:</span> @Model.ShippingAddress.Phone
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    <span class="font-medium">Địa chỉ:</span><br>
+                                    @Model.ShippingAddress.FullAddress
+                                </p>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Next Steps -->
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                        <h4 class="text-sm font-medium text-blue-900 mb-2">Các bước tiếp theo</h4>
+                        <ul class="text-sm text-blue-800 space-y-1">
+                            <li>• Chúng tôi sẽ xác nhận đơn hàng trong vòng 24 giờ</li>
+                            <li>• Bạn sẽ nhận được email thông báo khi đơn hàng được xử lý</li>
+                            <li>• Đơn hàng sẽ được giao trong 2-3 ngày làm việc</li>
+                            <li>• <strong>Bảo hành đã được kích hoạt tự động cho tất cả sản phẩm</strong></li>
+                        </ul>
+                    </div>
+
+                    <!-- Warranty Information -->
+                    <div class="mt-4 p-4 bg-green-50 rounded-lg">
+                        <h4 class="text-sm font-medium text-green-900 mb-2">
+                            <i class="fas fa-shield-alt mr-2"></i>Thông tin bảo hành
+                        </h4>
+                        <ul class="text-sm text-green-800 space-y-1">
+                            <li>• Bảo hành đã được tạo tự động với mã bảo hành riêng cho từng sản phẩm</li>
+                            <li>• Thời gian bảo hành được tính từ ngày giao hàng thành công</li>
+                            <li>• Bạn có thể quản lý bảo hành trong mục "Quản lý bảo hành"</li>
+                            <li>• Liên hệ chúng tôi khi cần hỗ trợ bảo hành</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/customer/orders"
+           class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <i class="fas fa-list-alt mr-2"></i>
+            Xem đơn hàng của tôi
+        </a>
+        <a href="@Url.Action("Index", "Warranty")"
+           class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+            <i class="fas fa-shield-alt mr-2"></i>
+            Quản lý bảo hành
+        </a>
+        <a href="/product"
+           class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <i class="fas fa-shopping-bag mr-2"></i>
+            Tiếp tục mua sắm
+        </a>
+    </div>
+
+    <!-- Order Tracking Information -->
+    <div class="mt-8 bg-white rounded-lg shadow p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Theo dõi đơn hàng</h3>
+        <p class="text-gray-600 mb-4">
+            Bạn có thể theo dõi trạng thái đơn hàng trong trang "Đơn hàng của tôi" hoặc liên hệ với chúng tôi:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <i class="fas fa-phone text-2xl text-blue-600 mb-2"></i>
+                <p class="text-sm font-medium text-gray-900">Hotline</p>
+                <p class="text-sm text-gray-600">1900 1234</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <i class="fas fa-envelope text-2xl text-blue-600 mb-2"></i>
+                <p class="text-sm font-medium text-gray-900">Email</p>
+                <p class="text-sm text-gray-600">support@phonestore.com</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-lg">
+                <i class="fas fa-clock text-2xl text-blue-600 mb-2"></i>
+                <p class="text-sm font-medium text-gray-900">Giờ làm việc</p>
+                <p class="text-sm text-gray-600">8:00 - 22:00 (T2-CN)</p>
+            </div>
+        </div>
+    </div>
+</div>

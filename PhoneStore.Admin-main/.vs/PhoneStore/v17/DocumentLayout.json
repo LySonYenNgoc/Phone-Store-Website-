@@ -1,0 +1,251 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1DF4BF98-BE08-4A97-8446-AAE5CE545E03}|..\\TestAD\\TestAD.csproj|c:\\users\\admin\\desktop\\kdclpm\\testad\\unittest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1DF4BF98-BE08-4A97-8446-AAE5CE545E03}|..\\TestAD\\TestAD.csproj|c:\\users\\admin\\desktop\\kdclpm\\testad\\testad.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ADMIN\\Desktop\\KDCLPM\\TestCUS\\UnitTest1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ADMIN\\.nuget\\packages\\epplus\\8.5.0\\readme.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Test trang login_F1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|c:\\users\\admin\\desktop\\kdclpm\\phonestore.admin-main\\errors.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|solutionrelative:errors.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|c:\\users\\admin\\desktop\\kdclpm\\phonestore.admin-main\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|c:\\users\\admin\\desktop\\kdclpm\\phonestore.admin-main\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|solutionrelative:views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|c:\\users\\admin\\desktop\\kdclpm\\phonestore.admin-main\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|solutionrelative:views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|c:\\users\\admin\\desktop\\kdclpm\\phonestore.admin-main\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|c:\\users\\admin\\desktop\\kdclpm\\phonestore.admin-main\\phonestore.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|solutionrelative:phonestore.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|c:\\users\\admin\\desktop\\kdclpm\\phonestore.admin-main\\controllers\\adminaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}|PhoneStore.csproj|solutionrelative:controllers\\adminaccountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestReportPage_F12.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestProductPage_F3.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Testdashboard_F2.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 100,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TestAD",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\TestAD\\TestAD.csproj",
+              "RelativeDocumentMoniker": "..\\TestAD\\TestAD.csproj",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\TestAD\\TestAD.csproj",
+              "RelativeToolTip": "..\\TestAD\\TestAD.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-07-17T13:31:35.839Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UnitTest1.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\TestCUS\\UnitTest1.cs",
+              "RelativeDocumentMoniker": "..\\TestCUS\\UnitTest1.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\TestCUS\\UnitTest1.cs",
+              "RelativeToolTip": "..\\TestCUS\\UnitTest1.cs",
+              "ViewState": "AgIAALEAAAAAAAAAAAAAAMEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-29T17:35:46.993Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "readme.txt",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\.nuget\\packages\\epplus\\8.5.0\\readme.txt",
+              "RelativeDocumentMoniker": "..\\..\\..\\.nuget\\packages\\epplus\\8.5.0\\readme.txt",
+              "ToolTip": "C:\\Users\\ADMIN\\.nuget\\packages\\epplus\\8.5.0\\readme.txt",
+              "RelativeToolTip": "..\\..\\..\\.nuget\\packages\\epplus\\8.5.0\\readme.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-03-29T15:06:50.913Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UnitTest1.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\TestAD\\UnitTest1.cs",
+              "RelativeDocumentMoniker": "..\\TestAD\\UnitTest1.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\TestAD\\UnitTest1.cs",
+              "RelativeToolTip": "..\\TestAD\\UnitTest1.cs",
+              "ViewState": "AgIAAHECAAAAAAAAAAA9wBAAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-29T14:20:23.673Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "errors.txt",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\errors.txt",
+              "RelativeDocumentMoniker": "errors.txt",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\errors.txt",
+              "RelativeToolTip": "errors.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-03-23T05:29:00.116Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "TestReportPage_F12.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestReportPage_F12.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestReportPage_F12.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestReportPage_F12.cs",
+              "RelativeToolTip": "..\\..\\..\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestReportPage_F12.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-21T12:33:52.509Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-20T14:22:26.673Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "TestProductPage_F3.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestProductPage_F3.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestProductPage_F3.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestProductPage_F3.cs",
+              "RelativeToolTip": "..\\..\\..\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\TestProductPage_F3.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-20T03:05:54.356Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Testdashboard_F2.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Testdashboard_F2.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Testdashboard_F2.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Testdashboard_F2.cs",
+              "RelativeToolTip": "..\\..\\..\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Testdashboard_F2.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-19T16:06:42.578Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "Views\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-19T15:31:53.65Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "Views\\_ViewImports.cshtml",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-19T15:31:51.161Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Test trang login_F1.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Test trang login_F1.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Test trang login_F1.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Test trang login_F1.cs",
+              "RelativeToolTip": "..\\..\\..\\Music\\KDCLPM\\KDCLPM\\Testcase_Ad\\Test trang login_F1.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-19T05:30:14.332Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-03-19T04:16:07.407Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "PhoneStore.csproj",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\PhoneStore.csproj",
+              "RelativeDocumentMoniker": "PhoneStore.csproj",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\PhoneStore.csproj",
+              "RelativeToolTip": "PhoneStore.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-03-19T04:08:14.248Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AdminAccountController.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\Controllers\\AdminAccountController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AdminAccountController.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Desktop\\KDCLPM\\PhoneStore.Admin-main\\Controllers\\AdminAccountController.cs",
+              "RelativeToolTip": "Controllers\\AdminAccountController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-19T04:01:10.834Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

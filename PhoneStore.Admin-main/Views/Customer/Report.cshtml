@@ -1,0 +1,292 @@
+@{
+    ViewData["Title"] = "Báo cáo thống kê khách hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4 py-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
+        <div class="animate-fade-in">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 bg-gradient-to-r from-pink-600 to-indigo-600 bg-clip-text text-transparent">
+                Báo cáo thống kê khách hàng
+            </h1>
+            <p class="text-gray-600 mt-2 text-sm md:text-base">Phân tích chi tiết về khách hàng và doanh số</p>
+        </div>
+        <div class="flex space-x-3">
+            <a asp-action="Index" class="inline-flex items-center px-4 py-2 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Tổng số khách hàng -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-1">
+                        <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-1">
+                            Tổng số khách hàng
+                        </p>
+                        <p class="text-2xl font-bold text-gray-900">@ViewBag.TotalCustomers</p>
+                    </div>
+                    <div class="p-3 bg-blue-100 rounded-full">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Khách hàng không có đơn hàng -->
+        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <div class="flex-1">
+                        <p class="text-xs font-semibold text-yellow-600 uppercase tracking-wider mb-1">
+                            Chưa có đơn hàng
+                        </p>
+                        <p class="text-2xl font-bold text-gray-900">@ViewBag.CustomersWithoutOrders</p>
+                    </div>
+                    <div class="p-3 bg-yellow-100 rounded-full">
+                        <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Biểu đồ khách hàng theo tháng -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-lg">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Khách hàng mới theo tháng</h3>
+                </div>
+                <div class="p-6">
+                    <div class="relative" style="height: 300px;">
+                        <canvas id="customersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ khách hàng theo loại thành viên -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-xl shadow-lg">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Khách hàng theo loại thành viên</h3>
+                </div>
+                <div class="p-6">
+                    <div class="relative" style="height: 300px;">
+                        <canvas id="membershipChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Biểu đồ khách hàng theo độ tuổi -->
+        <div>
+            <div class="bg-white rounded-xl shadow-lg">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Khách hàng theo thập kỷ sinh</h3>
+                </div>
+                <div class="p-6">
+                    <div class="relative" style="height: 300px;">
+                        <canvas id="ageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top khách hàng -->
+        <div>
+            <div class="bg-white rounded-xl shadow-lg">
+                <div class="p-6 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Top 10 khách hàng theo doanh số</h3>
+                </div>
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên khách hàng</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng chi tiêu</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số đơn hàng</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @if (ViewBag.TopCustomers != null)
+                                {
+                                    foreach (var customer in ViewBag.TopCustomers)
+                                    {
+                                        <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@customer.Customer.Name</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">@String.Format("{0:N0}", customer.TotalSpent) ₫</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@customer.OrderCount</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <a asp-action="Details" asp-route-id="@customer.Customer.CustomerId" class="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full hover:bg-blue-200 transition-colors duration-200">
+                                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    Chi tiết
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Khách hàng theo tháng
+        var ctxCustomers = document.getElementById("customersChart").getContext("2d");
+        var customersChart = new Chart(ctxCustomers, {
+            type: 'line',
+            data: {
+                labels: [@Html.Raw(ViewBag.ChartMonths)],
+                datasets: [{
+                    label: "Khách hàng mới",
+                    lineTension: 0.3,
+                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                    borderColor: "rgba(78, 115, 223, 1)",
+                    pointRadius: 3,
+                    pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHoverRadius: 3,
+                    pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                    pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                    pointHitRadius: 10,
+                    pointBorderWidth: 2,
+                    data: [@ViewBag.ChartCounts],
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 25,
+                        top: 25,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Khách hàng theo loại thành viên
+        var ctxMembership = document.getElementById("membershipChart").getContext("2d");
+        var membershipChart = new Chart(ctxMembership, {
+            type: 'doughnut',
+            data: {
+                labels: [@if (ViewBag.MembershipData != null) {
+                    @foreach (var item in ViewBag.MembershipData) {
+                        @Html.Raw($"'{item.MembershipName}', ")
+                    }
+                }],
+                datasets: [{
+                    data: [@if (ViewBag.MembershipData != null) {
+                        @foreach (var item in ViewBag.MembershipData) {
+                            @Html.Raw($"{item.Count}, ")
+                        }
+                    }],
+                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796'],
+                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#e3a820', '#d52a1a', '#6e707e'],
+                    hoverBorderColor: "rgba(234, 236, 244, 1)",
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // Khách hàng theo thập kỷ sinh
+        var ctxAge = document.getElementById("ageChart").getContext("2d");
+        var ageChart = new Chart(ctxAge, {
+            type: 'bar',
+            data: {
+                labels: [@Html.Raw(ViewBag.Decades)],
+                datasets: [{
+                    label: "Số lượng",
+                    backgroundColor: "#4e73df",
+                    hoverBackgroundColor: "#2e59d9",
+                    data: [@ViewBag.DecadeCounts],
+                }],
+            },
+            options: {
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 10,
+                        right: 25,
+                        top: 25,
+                        bottom: 0
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,306 @@
+@model PhoneStore.Models.Role
+@{
+    ViewData["Title"] = "Chỉnh sửa quyền";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var allPermissions = (ViewBag.AllPermissions as List<PhoneStore.Models.Permission>) ?? new List<PhoneStore.Models.Permission>();
+    var permissionsByArea = allPermissions.GroupBy(p => p.Area ?? "").OrderBy(g => g.Key);
+    
+    // Helper function to get color by action
+    string GetActionColor(string action)
+    {
+        return action switch
+        {
+            "View" => "bg-blue-100 text-blue-800",
+            "Create" => "bg-green-100 text-green-800",
+            "Edit" => "bg-yellow-100 text-yellow-800",
+            "Delete" => "bg-red-100 text-red-800",
+            _ => "bg-gray-100 text-gray-800"
+        };
+    }
+    
+    // Helper function to get icon by action
+    string GetActionIcon(string action)
+    {
+        return action switch
+        {
+            "View" => "<svg class='w-4 h-4 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'></path><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'></path></svg>",
+            "Create" => "<svg class='w-4 h-4 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4'></path></svg>",
+            "Edit" => "<svg class='w-4 h-4 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'></path></svg>",
+            "Delete" => "<svg class='w-4 h-4 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'></path></svg>",
+            _ => "<svg class='w-4 h-4 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13 10V3L4 14h7v7l9-11h-7z'></path></svg>"
+        };
+    }
+    
+    // Dictionary to map area to friendly name
+    Dictionary<string, string> areaLabels = new Dictionary<string, string>
+    {
+        { "Product", "Sản phẩm" },
+        { "Category", "Danh mục" },
+        { "Color", "Màu sắc" },
+        { "Discount", "Giảm giá" },
+        { "Order", "Đơn hàng" },
+        { "Customer", "Khách hàng" },
+        { "AdminAccount", "Tài khoản quản trị" },
+        { "Role", "Phân quyền" },
+        { "Statistics", "Thống kê & Báo cáo" }
+    };
+    
+    // Dictionary to map action to friendly name
+    Dictionary<string, string> actionLabels = new Dictionary<string, string>
+    {
+        { "View", "Xem" },
+        { "Create", "Thêm" },
+        { "Edit", "Sửa" },
+        { "Delete", "Xóa" },
+        { "UpdateStatus", "Cập nhật trạng thái" },
+        { "Approve", "Phê duyệt" },
+        { "Block", "Khóa/Mở khóa" },
+        { "AssignPermissions", "Gán quyền" },
+        { "ViewRevenue", "Xem doanh thu" },
+        { "ViewProducts", "Xem sản phẩm" },
+        { "ExportReports", "Xuất báo cáo" }
+    };
+    
+    // Generate unique identifier for area toggle
+    string GetAreaId(string area) => $"area-{area.ToLower().Replace(" ", "-")}";
+}
+
+<div class="container mx-auto px-4 pb-8">
+    <div class="max-w-5xl mx-auto">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Chỉnh sửa quyền - @Model.RoleName</h2>
+            <p class="text-gray-600">@Model.Description</p>
+            
+            @if (Model.IsSystem)
+            {
+                <div class="mt-2 p-3 bg-yellow-50 text-yellow-700 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium">Lưu ý về vai trò hệ thống</h3>
+                            <div class="mt-1 text-sm">
+                                <p>Đây là vai trò hệ thống. Một số thay đổi có thể bị hạn chế.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        
+        <form method="post" asp-controller="Role" asp-action="Edit">
+            <input type="hidden" asp-for="RoleId" />
+            @Html.AntiForgeryToken()
+            
+            <div class="bg-white rounded-lg shadow overflow-hidden mb-4">
+                <div class="px-4 py-3 bg-gray-50 sm:px-6 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-gray-900">Tất cả quyền</h3>
+                    <div>
+                        <button type="button" id="selectAll" class="px-3 py-1 text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none">
+                            Chọn tất cả
+                        </button>
+                        <button type="button" id="deselectAll" class="px-3 py-1 text-xs font-medium rounded text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none">
+                            Bỏ chọn tất cả
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Discord-style Permission UI -->
+            <div class="bg-white rounded-lg shadow overflow-hidden mb-6">
+                @foreach (var areaGroup in permissionsByArea)
+                {
+                    var areaName = areaGroup.Key;
+                    var areaDisplayName = areaLabels.ContainsKey(areaName) ? areaLabels[areaName] : areaName;
+                    var areaId = GetAreaId(areaName);
+                    
+                    <div class="border-b border-gray-200 last:border-b-0">
+                        <div class="px-4 py-4 bg-gray-50 sm:px-6 cursor-pointer flex items-center justify-between" 
+                             onclick="toggleArea('@areaId')">
+                            <div class="flex items-center">
+                                <svg id="@areaId-icon-expand" class="h-4 w-4 text-gray-500 mr-2 transform transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                                <svg id="@areaId-icon-collapse" class="h-4 w-4 text-gray-500 mr-2 transform transition-transform rotate-180 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                                <h3 class="text-lg font-medium text-gray-900">@areaDisplayName</h3>
+                            </div>
+                            
+                            <!-- Summary of selected permissions -->
+                            <div class="flex items-center space-x-2">
+                                @foreach (var actionGroup in areaGroup.GroupBy(p => p.Action).OrderBy(g => g.Key))
+                                {
+                                    var action = actionGroup.Key;
+                                    var actionLabel = actionLabels.ContainsKey(action) ? actionLabels[action] : action;
+                                    var actionColor = GetActionColor(action);
+                                    var allChecked = actionGroup.All(p => Model.Permissions.Any(mp => mp.PermissionId == p.PermissionId));
+                                    var anyChecked = actionGroup.Any(p => Model.Permissions.Any(mp => mp.PermissionId == p.PermissionId));
+                                    var badgeClass = allChecked ? $"{actionColor}" : (anyChecked ? "bg-gray-100 text-gray-500" : "bg-gray-100 text-gray-400");
+                                    
+                                    <span class="@badgeClass px-2 py-1 text-xs font-medium rounded-full">
+                                        @actionLabel
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        
+                        <div id="@areaId-content" class="px-4 py-3 sm:p-6 bg-white">
+                            <!-- Quick selectors for this area -->
+                            <div class="mb-4 flex flex-wrap gap-2">
+                                <button type="button" class="px-3 py-1 text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none"
+                                        onclick="selectAreaPermissions('@areaId', true)">
+                                    Chọn tất cả @areaDisplayName
+                                </button>
+                                <button type="button" class="px-3 py-1 text-xs font-medium rounded text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
+                                        onclick="selectAreaPermissions('@areaId', false)">
+                                    Bỏ chọn tất cả @areaDisplayName
+                                </button>
+                                
+                                @foreach (var action in new[] { "View", "Create", "Edit", "Delete" })
+                                {
+                                    var actionPermissions = areaGroup.Where(p => p.Action == action);
+                                    if (actionPermissions.Any())
+                                    {
+                                        var actionLabel = actionLabels.ContainsKey(action) ? actionLabels[action] : action;
+                                        var actionColor = GetActionColor(action);
+                                        <button type="button" class="px-3 py-1 text-xs font-medium rounded text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none"
+                                                onclick="selectActionPermissions('@areaId', '@action')">
+                                            Chỉ @actionLabel
+                                        </button>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Permissions grid with permission cards -->
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2 area-permission-container" data-area="@areaId">
+                                @foreach (var permission in areaGroup)
+                                {
+                                    var isChecked = Model.Permissions.Any(p => p.PermissionId == permission.PermissionId);
+                                    var actionColor = GetActionColor(permission.Action);
+                                    var actionIcon = GetActionIcon(permission.Action);
+                                    var actionLabel = actionLabels.ContainsKey(permission.Action) ? actionLabels[permission.Action] : permission.Action;
+                                    
+                                    <div class="relative border rounded-lg @(isChecked ? "border-blue-300 bg-blue-50" : "border-gray-200") hover:border-blue-300 transition-colors p-4 permission-card"
+                                         data-area="@areaId" data-action="@permission.Action">
+                                        <div class="absolute top-3 right-3">
+                                            <label class="inline-flex items-center">
+                                                <input type="checkbox"
+                                                       name="selectedPermissions"
+                                                       value="@permission.PermissionId"
+                                                       @(isChecked ? "checked" : "")
+                                                       class="permission-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                                       data-area="@areaId"
+                                                       data-action="@permission.Action"
+                                                       onchange="updateCardState(this)" />
+                                            </label>
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium @actionColor">
+                                                @Html.Raw(actionIcon) @actionLabel
+                                            </span>
+                                        </div>
+                                        <h4 class="text-sm font-medium text-gray-900 mb-1">@permission.Name</h4>
+                                        <p class="text-xs text-gray-500">@permission.Description</p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            
+            <div class="flex justify-end space-x-4">
+                <a href="@Url.Action("Index")" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Quay lại
+                </a>
+                <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Lưu thay đổi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Toggle area visibility
+        function toggleArea(areaId) {
+            const content = document.getElementById(`${areaId}-content`);
+            const expandIcon = document.getElementById(`${areaId}-icon-expand`);
+            const collapseIcon = document.getElementById(`${areaId}-icon-collapse`);
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                expandIcon.classList.add('hidden');
+                collapseIcon.classList.remove('hidden');
+            } else {
+                content.style.display = 'none';
+                expandIcon.classList.remove('hidden');
+                collapseIcon.classList.add('hidden');
+            }
+        }
+        
+        // Select all permissions in an area
+        function selectAreaPermissions(areaId, selected) {
+            const checkboxes = document.querySelectorAll(`.permission-checkbox[data-area="${areaId}"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selected;
+                updateCardState(checkbox);
+            });
+        }
+        
+        // Select all permissions with a specific action in an area
+        function selectActionPermissions(areaId, action) {
+            const container = document.querySelector(`.area-permission-container[data-area="${areaId}"]`);
+            const checkboxes = container.querySelectorAll(`.permission-checkbox[data-action="${action}"]`);
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+                updateCardState(checkbox);
+            });
+        }
+        
+        // Update card state based on checkbox
+        function updateCardState(checkbox) {
+            const card = checkbox.closest('.permission-card');
+            if (checkbox.checked) {
+                card.classList.add('border-blue-300', 'bg-blue-50');
+                card.classList.remove('border-gray-200');
+            } else {
+                card.classList.remove('border-blue-300', 'bg-blue-50');
+                card.classList.add('border-gray-200');
+            }
+        }
+        
+        // Select/deselect all permissions
+        document.getElementById('selectAll').addEventListener('click', function() {
+            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+                updateCardState(checkbox);
+            });
+        });
+        
+        document.getElementById('deselectAll').addEventListener('click', function() {
+            document.querySelectorAll('.permission-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+                updateCardState(checkbox);
+            });
+        });
+        
+        // Initialize all areas to be expanded
+        document.addEventListener('DOMContentLoaded', function() {
+            @foreach (var areaGroup in permissionsByArea)
+            {
+                var areaId = GetAreaId(areaGroup.Key);
+                <text>
+                document.getElementById('@areaId-icon-expand').classList.add('hidden');
+                document.getElementById('@areaId-icon-collapse').classList.remove('hidden');
+                </text>
+            }
+        });
+    </script>
+}

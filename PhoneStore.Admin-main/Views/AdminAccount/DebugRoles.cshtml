@@ -1,0 +1,99 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Debug Roles";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Debug Roles Information</h1>
+    
+    <div class="section">
+        <h2>Summary</h2>
+        <p><strong>Total Roles in DB:</strong> @ViewBag.AllRolesCount</p>
+        <p><strong>Filtered Roles (Available for Registration):</strong> @ViewBag.FilteredRolesCount</p>
+    </div>
+
+    <div class="section">
+        <h2>All Roles in Database</h2>
+        @if (ViewBag.AllRoles != null && ((List<PhoneStore.Models.Role>)ViewBag.AllRoles).Any())
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Is System</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in (List<PhoneStore.Models.Role>)ViewBag.AllRoles)
+                    {
+                        <tr>
+                            <td>@role.RoleId</td>
+                            <td>@role.RoleName</td>
+                            <td>@role.Description</td>
+                            <td>@role.IsSystem</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p style="color: red;"><strong>No roles found in database!</strong></p>
+        }
+    </div>
+
+    <div class="section">
+        <h2>Filtered Roles (Available for Registration)</h2>
+        @if (ViewBag.FilteredRoles != null && ((List<PhoneStore.Models.Role>)ViewBag.FilteredRoles).Any())
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Is System</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var role in (List<PhoneStore.Models.Role>)ViewBag.FilteredRoles)
+                    {
+                        <tr>
+                            <td>@role.RoleId</td>
+                            <td>@role.RoleName</td>
+                            <td>@role.Description</td>
+                            <td>@role.IsSystem</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p style="color: red;"><strong>No filtered roles found!</strong></p>
+        }
+    </div>
+
+    <div class="section">
+        <h2>Test Registration Form</h2>
+        <form action="/AdminAccount/Register" method="get">
+            <button type="submit" style="padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer;">
+                Go to Registration Page
+            </button>
+        </form>
+    </div>
+</body>
+</html>

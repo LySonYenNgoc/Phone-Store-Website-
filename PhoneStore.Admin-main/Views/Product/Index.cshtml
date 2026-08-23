@@ -1,0 +1,416 @@
+@model IEnumerable<PhoneStore.Models.Product>
+@{
+    ViewData["Title"] = "Quản lý sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<form id="antiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
+<!-- Form ẩn cho việc xóa sản phẩm -->
+<form id="deleteProductForm" method="post" action="" style="display: none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<div class="container mx-auto px-4">
+    @if (TempData["Success"] != null)
+    {
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 relative" role="alert">
+            <span class="block sm:inline">@TempData["Success"]</span>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
+            <span class="block sm:inline">@TempData["Error"]</span>
+        </div>
+    }
+
+    <!-- Header và Nút thêm mới -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Quản lý sản phẩm</h2>
+        <div class="mt-4 md:mt-0">
+            <a href="/Product/Create" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Thêm sản phẩm mới
+            </a>
+        </div>
+    </div>    <!-- Bộ lọc và tìm kiếm -->    <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                <input type="text" id="searchTerm" value="@ViewBag.SearchTerm" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Tên sản phẩm...">
+            </div>            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+                <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Tất cả danh mục</option>
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        if (category.Value == ViewBag.SelectedCategory?.ToString())
+                        {
+                            <option value="@category.Value" selected>@category.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@category.Value">@category.Text</option>
+                        }
+                    }
+                </select>
+            </div><div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Màu sắc</label>                <select id="color" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="">Tất cả màu sắc</option>
+                    @foreach (var color in ViewBag.Colors)
+                    {
+                        if (color.Value == ViewBag.SelectedColor?.ToString())
+                        {
+                            <option value="@color.Value" selected>@color.Text</option>
+                        }
+                        else
+                        {
+                            <option value="@color.Value">@color.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Sắp xếp theo</label>                <select id="sortBy" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    @if (ViewBag.SortBy?.ToString() == "name")
+                    {
+                        <option value="name" selected>Tên sản phẩm</option>
+                    }
+                    else
+                    {
+                        <option value="name">Tên sản phẩm</option>
+                    }
+
+                    @if (ViewBag.SortBy?.ToString() == "price")
+                    {
+                        <option value="price" selected>Giá</option>
+                    }
+                    else
+                    {
+                        <option value="price">Giá</option>
+                    }                    @if (ViewBag.SortBy?.ToString() == "stock")
+                    {
+                        <option value="stock" selected>Số lượng tồn</option>
+                    }
+                    else
+                    {
+                        <option value="stock">Số lượng tồn</option>
+                    }
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                <select id="publishStatus" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    @if (ViewBag.PublishStatus?.ToString() == "")
+                    {
+                        <option value="" selected>Tất cả</option>
+                    }
+                    else
+                    {
+                        <option value="">Tất cả</option>
+                    }
+
+                    @if (ViewBag.PublishStatus?.ToString() == "true")
+                    {
+                        <option value="true" selected>Hiển thị</option>
+                    }
+                    else
+                    {
+                        <option value="true">Hiển thị</option>
+                    }
+
+                    @if (ViewBag.PublishStatus?.ToString() == "false")
+                    {
+                        <option value="false" selected>Ẩn</option>
+                    }
+                    else
+                    {
+                        <option value="false">Ẩn</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div><!-- Danh sách sản phẩm -->
+    <div id="productGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        @foreach (var product in Model ?? new List<PhoneStore.Models.Product>())
+        {
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <div class="relative">                    @if (product.ProductImages.Any())
+                    {
+                        var firstImage = product.ProductImages.First();
+                        <img src="/Product/GetImage/@firstImage.ImageId" alt="@product.ProductName" class="w-full h-48 object-cover">
+                          <!-- Color variants -->
+                        <div class="absolute bottom-2 left-2 flex space-x-2">
+                            @foreach (var colorGroup in product.ProductImages.GroupBy(pi => pi.Color).Take(5))
+                            {
+                                @if (colorGroup.Key != null && colorGroup.Key.ColorId > 0)
+                                {
+                                    <button class="w-6 h-6 rounded-full border-2 border-white shadow hover:scale-110 transition-transform duration-200"
+                                            style="background-color: @colorGroup.Key.ColorName"
+                                            title="@colorGroup.Key.ColorName"
+                                            onclick="showColorImages(@product.ProductId, @colorGroup.Key.ColorId)">
+                                    </button>
+                                }
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="/assets/img/default-product.jpg" alt="@product.ProductName" class="w-full h-48 object-cover">
+                    }
+
+                    @if (product.Discount != null)
+                    {
+                        <div class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-semibold">
+                            -@(product.Discount.DiscountPercent)%
+                        </div>
+                    }
+                </div>
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2 line-clamp-2">@product.ProductName</h3>
+                    <p class="text-sm text-gray-600 mb-2 line-clamp-2">@product.ShortDescription</p>
+                    <div class="flex justify-between items-center mb-2">
+                        @if (product.Discount != null)
+                        {                            var discountedPrice = product.Price * (1 - product.Discount.DiscountPercent / 100m);
+                            <div class="flex flex-col">
+                                <span class="text-lg font-bold text-blue-600">@String.Format("{0:N0}", discountedPrice) ₫</span>
+                                <span class="text-sm text-gray-500 line-through">@String.Format("{0:N0}", product.Price) ₫</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-lg font-bold text-blue-600">@String.Format("{0:N0}", product.Price) ₫</span>                        }
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-500">Còn @product.Stock</span>
+                            @if (product.IsPublished)
+                            {
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-medium">Hiển thị</span>
+                            }
+                            else
+                            {
+                                <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium">Ẩn</span>
+                            }
+                        </div>
+                    </div>                    <div class="flex space-x-2 mb-2">
+                        <a href="/Product/Details/@product.ProductId"
+                           class="flex-1 bg-green-500 hover:bg-green-600 text-white text-center py-2 rounded-lg transition-colors duration-300">
+                            Chi tiết
+                        </a>                        <a href="/Product/Edit/@product.ProductId"
+                           class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-center py-2 rounded-lg transition-colors duration-300">
+                            Sửa
+                        </a>
+                    </div>
+                    <div class="flex space-x-2">
+                        <!-- Toggle Publish/Unpublish Button -->
+                        <form method="post" action="/Product/TogglePublish/@product.ProductId" class="flex-1">
+                            @Html.AntiForgeryToken()
+                            @if (product.IsPublished)
+                            {
+                                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white text-center py-2 rounded-lg transition-colors duration-300">
+                                    Ẩn
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white text-center py-2 rounded-lg transition-colors duration-300">
+                                    Hiện
+                                </button>
+                            }
+                        </form>
+
+                        <!-- Delete Button -->
+                        <form method="post" action="/Product/Delete/@product.ProductId" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');" class="flex-1">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white text-center py-2 rounded-lg transition-colors duration-300">
+                                Xóa
+                            </button>
+                        </form>
+                    </div>
+                </div>            </div>
+        }
+    </div>
+
+    <!-- Phân trang -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="flex justify-center mt-8">
+            <div class="flex space-x-1">                @if (ViewBag.CurrentPage > 1)
+                {
+                    <a href="/Product/Index?searchTerm=@ViewBag.SearchTerm&category=@ViewBag.SelectedCategory&color=@ViewBag.SelectedColor&sortBy=@ViewBag.SortBy&publishStatus=@ViewBag.PublishStatus&page=@(ViewBag.CurrentPage - 1)"
+                       class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+                        Trước
+                    </a>
+                }
+
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <a href="/Product/Index?searchTerm=@ViewBag.SearchTerm&category=@ViewBag.SelectedCategory&color=@ViewBag.SelectedColor&sortBy=@ViewBag.SortBy&publishStatus=@ViewBag.PublishStatus&page=@i"
+                       class="px-4 py-2 @(i == ViewBag.CurrentPage ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800") rounded-lg hover:bg-blue-600 hover:text-white">
+                        @i
+                    </a>
+                }
+
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <a href="/Product/Index?searchTerm=@ViewBag.SearchTerm&category=@ViewBag.SelectedCategory&color=@ViewBag.SelectedColor&sortBy=@ViewBag.SortBy&publishStatus=@ViewBag.PublishStatus&page=@(ViewBag.CurrentPage + 1)"
+                       class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+                        Sau
+                    </a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal for color images -->
+<div id="colorModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg max-w-2xl w-full mx-4">
+        <div class="p-4 border-b border-gray-200 flex justify-between items-center">
+            <h3 class="text-xl font-semibold text-gray-800">Hình ảnh theo màu sắc</h3>
+            <button onclick="closeColorModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="p-4">
+            <div id="colorImages" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Xử lý DOM khi trang được load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Xử lý tìm kiếm và lọc
+            let typingTimer;
+            const doneTypingInterval = 500;
+
+            // Xử lý sự kiện cho tìm kiếm (input text) với debounce
+            const searchTermElement = document.getElementById('searchTerm');
+            if (searchTermElement) {
+                searchTermElement.addEventListener('input', function() {
+                    clearTimeout(typingTimer);
+                    if (this.value.trim() !== '@ViewBag.SearchTerm' || '@ViewBag.SearchTerm' === null) {
+                        typingTimer = setTimeout(function() {
+                            applyFilters();
+                        }, doneTypingInterval);
+                    }
+                });
+            }
+
+            // Xử lý sự kiện cho các dropdown (select)
+            ['category', 'color', 'sortBy', 'publishStatus'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('change', function() {
+                        // Only apply filters if the value actually changed from the initial value
+                        const previousValue = element.getAttribute('data-previous-value') || '';
+                        if (this.value !== previousValue) {
+                            element.setAttribute('data-previous-value', this.value);
+                            applyFilters();
+                        }
+                    });
+                    // Store initial value
+                    element.setAttribute('data-previous-value', element.value);
+                }
+            });
+        });
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchTerm') ? document.getElementById('searchTerm').value : '';
+            const category = document.getElementById('category') ? document.getElementById('category').value : '';
+            const color = document.getElementById('color') ? document.getElementById('color').value : '';
+            const sortBy = document.getElementById('sortBy') ? document.getElementById('sortBy').value : '';
+            const publishStatus = document.getElementById('publishStatus') ? document.getElementById('publishStatus').value : '';
+
+            const url = `/Product/Index?searchTerm=${encodeURIComponent(searchTerm)}&category=${encodeURIComponent(category)}&color=${encodeURIComponent(color)}&sortBy=${encodeURIComponent(sortBy)}&publishStatus=${encodeURIComponent(publishStatus)}`;
+            
+            window.location.href = url;
+        }
+
+        // Xử lý xóa sản phẩm
+        function confirmDelete(id) {
+            if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+                try {
+                    console.log('Deleting product with ID:', id);
+                    // Cập nhật action của form xóa
+                    const form = document.getElementById('deleteProductForm');
+                    form.action = `/Product/Delete/${id}`;
+                    console.log('Form action set to:', form.action);
+
+                    // Submit form
+                    form.submit();
+                    console.log('Form submitted');
+                } catch (error) {
+                    console.error('Error in confirmDelete:', error);
+                    alert('Có lỗi xảy ra: ' + error.message);
+                }
+            }
+        }
+
+        // Xử lý hiển thị hình ảnh theo màu
+        function showColorImages(productId, colorId) {
+            if (!productId || !colorId) {
+                console.error('Thiếu thông tin productId hoặc colorId:', { productId, colorId });
+                alert('Không thể hiển thị hình ảnh do thiếu thông tin sản phẩm hoặc màu sắc');
+                return;
+            }
+
+            console.log(`Fetching images for product ${productId}, color ${colorId}`);
+            document.getElementById('colorModal').classList.remove('hidden');
+            document.getElementById('colorImages').innerHTML = '<div class="flex justify-center items-center p-10"><div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500"></div></div>';
+
+            const url = `/Product/GetColorImages?productId=${productId}&colorId=${colorId}`;
+            console.log(`Making request to: ${url}`);
+
+            fetch(url)
+                .then(response => {
+                    console.log(`Response status: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (!data.success) {
+                        throw new Error(data.message || 'Không lấy được dữ liệu hình ảnh');
+                    }
+
+                    const container = document.getElementById('colorImages');
+                    container.innerHTML = '';
+
+                    if (!data.images || data.images.length === 0) {
+                        container.innerHTML = '<p class="text-center text-gray-500 py-10">Không có hình ảnh nào cho màu này</p>';
+                        return;
+                    }
+
+                    data.images.forEach(image => {
+                        const img = document.createElement('img');
+                        img.src = image.imageUrl;
+                        img.alt = 'Product color variant';
+                        img.className = 'w-full h-48 object-cover rounded-lg';
+                        container.appendChild(img);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching color images:', error);
+                    document.getElementById('colorImages').innerHTML =
+                        `<p class="text-center text-red-500 py-10">Có lỗi xảy ra khi tải hình ảnh: ${error.message}</p>
+                         <p class="text-center text-gray-500">Thử tải lại trang và thử lại.</p>`;
+                });
+        }
+
+        function closeColorModal() {
+            document.getElementById('colorModal').classList.add('hidden');
+        }
+    </script>
+}

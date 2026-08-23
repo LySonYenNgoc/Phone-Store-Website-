@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "PhoneStore.Customer.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "..\\TestUICustomers\\TestSelenium_CUS.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

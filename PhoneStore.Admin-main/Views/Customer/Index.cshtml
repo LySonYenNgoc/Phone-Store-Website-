@@ -1,0 +1,466 @@
+@model PhoneStore.ViewModels.CustomerFilterViewModel
+@{
+    ViewData["Title"] = "Quản lý khách hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
+        <div class="animate-fade-in">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 bg-gradient-to-r from-pink-600 to-indigo-600 bg-clip-text text-transparent">
+                Quản lý khách hàng
+            </h1>
+            <p class="text-gray-600 mt-2 text-sm md:text-base">Quản lý thông tin khách hàng và theo dõi hoạt động</p>
+        </div>
+        <a asp-action="Create" class="inline-flex items-center px-4 md:px-6 py-3 bg-gradient-to-r from-pink-500 to-indigo-600 text-white font-semibold rounded-xl hover:from-pink-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+            <span class="hidden sm:inline">Thêm khách hàng mới</span>
+            <span class="sm:hidden">Thêm mới</span>
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+        <!-- Total Customers -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-lg hover:bg-white/80 transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Tổng khách hàng</p>
+                    <p class="text-2xl md:text-3xl font-bold text-gray-900 mt-2 animate-pulse">@Model.TotalCustomers</p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center shadow-inner">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Customers This Month -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-lg hover:bg-white/80 transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Khách hàng mới</p>
+                    <p class="text-xs text-gray-500">(tháng này)</p>
+                    <p class="text-2xl md:text-3xl font-bold text-emerald-600 mt-1 animate-pulse">@Model.NewCustomersThisMonth</p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl flex items-center justify-center shadow-inner">
+                    <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers With Orders -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-lg hover:bg-white/80 transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Có đơn hàng</p>
+                    <p class="text-2xl md:text-3xl font-bold text-purple-600 mt-2 animate-pulse">@Model.CustomersWithOrders</p>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center shadow-inner">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Button -->
+        <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-white/50 hover:shadow-lg hover:bg-white/80 transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Báo cáo</p>
+                    <a asp-action="Report" class="inline-flex items-center mt-3 px-3 py-2 bg-gradient-to-r from-orange-100 to-orange-200 text-orange-700 rounded-lg hover:from-orange-200 hover:to-orange-300 transition-all duration-200 text-sm font-medium shadow-sm">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Xem báo cáo
+                    </a>
+                </div>
+                <div class="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center shadow-inner">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    @if (TempData["Message"] != null)
+    {
+        <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center">
+            <svg class="w-5 h-5 mr-3 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            @TempData["Message"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-800 rounded-xl flex items-center">
+            <svg class="w-5 h-5 mr-3 text-red-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- Search and Filter Section -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 mb-8 overflow-hidden">
+        <div class="px-4 md:px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                Tìm kiếm và lọc
+            </h3>
+        </div>
+        <div class="p-4 md:p-6">
+            <form asp-action="Index" method="get" class="space-y-4 md:space-y-0 md:grid md:grid-cols-12 md:gap-4">
+                <div class="md:col-span-5 space-y-2">
+                    <label for="searchString" class="block text-sm font-medium text-gray-700">Tìm kiếm</label>
+                    <div class="relative group">
+                        <input type="text" 
+                               id="searchString" 
+                               name="searchString" 
+                               value="@Model.SearchString"
+                               class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 group-hover:border-gray-400 bg-white/50 backdrop-blur-sm"
+                               placeholder="Tên, email, số điện thoại...">
+                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-pink-500 transition-colors duration-200">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-4 space-y-2">
+                    <label for="membershipId" class="block text-sm font-medium text-gray-700">Loại thành viên</label>
+                    <div class="relative">
+                        <select id="membershipId" 
+                                name="membershipId"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-300 appearance-none bg-white/50 backdrop-blur-sm">
+                            <option value="">Tất cả loại thành viên</option>
+                            @foreach (var item in (SelectList)ViewBag.Memberships)
+                            {
+                                if (Model.MembershipId != null && item.Value == Model.MembershipId.ToString())
+                                {
+                                    <option value="@item.Value" selected>@item.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            }
+                        </select>
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-3 flex flex-col md:flex-row items-stretch md:items-end space-y-2 md:space-y-0 md:space-x-2">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-4 py-3 rounded-xl hover:from-pink-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300 font-semibold flex items-center justify-center shadow-lg hover:shadow-xl">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Tìm kiếm</span>
+                        <span class="sm:hidden">Tìm</span>
+                    </button>
+                    <a asp-action="Index" class="flex-1 md:flex-none px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-semibold flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Đặt lại</span>
+                        <span class="sm:hidden">Reset</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Customer List Table -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm border border-white/50 overflow-hidden">
+        <div class="px-4 md:px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                <div class="w-8 h-8 bg-gradient-to-r from-pink-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                Danh sách khách hàng
+                <span class="ml-2 text-sm text-gray-500 font-normal">(@Model.Customers.Count() khách hàng)</span>
+            </h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <!-- Desktop Table -->
+            <div class="hidden lg:block">
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Khách hàng</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Liên hệ</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Năm sinh</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Thành viên</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Ngày tạo</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white/50 divide-y divide-gray-200">
+                        @foreach (var item in Model.Customers)
+                        {
+                            <tr class="hover:bg-white/80 transition-all duration-200 group">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 shadow-sm">
+                                        #@item.CustomerId
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-12 w-12">
+                                            <div class="h-12 w-12 rounded-full bg-gradient-to-br from-pink-500 to-indigo-600 flex items-center justify-center shadow-lg ring-2 ring-white">
+                                                <span class="text-sm font-bold text-white">
+                                                    @(string.IsNullOrEmpty(item.Name) ? "?" : item.Name.Substring(0, 1).ToUpper())
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-semibold text-gray-900 group-hover:text-pink-600 transition-colors duration-200">@item.Name</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900 font-medium">@item.Email</div>
+                                    <div class="text-sm text-gray-500">@item.Phone</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@item.BirthYear</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if (item.Membership != null)
+                                    {
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-green-100 to-green-200 text-green-800 shadow-sm">
+                                            @item.Membership.Name
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-gray-100 to-gray-200 text-gray-600 shadow-sm">
+                                            Không có
+                                        </span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-medium">
+                                    @(item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy") : "")
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <a asp-action="Details" asp-route-id="@item.CustomerId" 
+                                           class="inline-flex items-center px-3 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 hover:border-blue-400 transition-all duration-200 shadow-sm hover:shadow-md">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            </svg>
+                                            Chi tiết
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.CustomerId" 
+                                           class="inline-flex items-center px-3 py-2 border border-emerald-300 text-emerald-700 rounded-lg hover:bg-emerald-50 hover:border-emerald-400 transition-all duration-200 shadow-sm hover:shadow-md">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                            </svg>
+                                            Sửa
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.CustomerId" 
+                                           class="inline-flex items-center px-3 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 hover:border-red-400 transition-all duration-200 shadow-sm hover:shadow-md">
+                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                            Xóa
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Cards -->
+            <div class="lg:hidden space-y-4 p-4">
+                @foreach (var item in Model.Customers)
+                {
+                    <div class="bg-white/80 rounded-xl p-4 shadow-sm border border-gray-200 hover:shadow-md transition-all duration-200">
+                        <div class="flex items-start justify-between mb-3">
+                            <div class="flex items-center">
+                                <div class="h-10 w-10 bg-gradient-to-br from-pink-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                                    <span class="text-sm font-bold text-white">
+                                        @(string.IsNullOrEmpty(item.Name) ? "?" : item.Name.Substring(0, 1).ToUpper())
+                                    </span>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-semibold text-gray-900">@item.Name</h4>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        #@item.CustomerId
+                                    </span>
+                                </div>
+                            </div>
+                            @if (item.Membership != null)
+                            {
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    @item.Membership.Name
+                                </span>
+                            }
+                        </div>
+
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Email:</span>
+                                <span class="font-medium text-gray-900">@item.Email</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Điện thoại:</span>
+                                <span class="font-medium text-gray-900">@item.Phone</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Năm sinh:</span>
+                                <span class="font-medium text-gray-900">@item.BirthYear</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Ngày tạo:</span>
+                                <span class="font-medium text-gray-900">@(item.CreatedDate.HasValue ? item.CreatedDate.Value.ToString("dd/MM/yyyy") : "")</span>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2 mt-4 pt-3 border-t border-gray-200">
+                            <a asp-action="Details" asp-route-id="@item.CustomerId" 
+                               class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-blue-300 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors duration-200 text-sm font-medium">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                Chi tiết
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.CustomerId" 
+                               class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-emerald-300 text-emerald-700 rounded-lg hover:bg-emerald-50 transition-colors duration-200 text-sm font-medium">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                Sửa
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.CustomerId" 
+                               class="flex-1 inline-flex items-center justify-center px-3 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition-colors duration-200 text-sm font-medium">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Xóa
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        
+        <!-- Empty State -->
+        @if (!Model.Customers.Any())
+        {
+            <div class="text-center py-16">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Không có khách hàng nào</h3>
+                <p class="text-gray-500 mb-6">Hãy thêm khách hàng đầu tiên của bạn</p>
+                <a asp-action="Create" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-pink-500 to-indigo-600 text-white font-semibold rounded-xl hover:from-pink-600 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Thêm khách hàng mới
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (ViewBag.TotalPages != null && (int)ViewBag.TotalPages > 1)
+    {
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 bg-white/60 backdrop-blur-sm rounded-2xl p-4 md:p-6 shadow-sm border border-white/50">
+            <div class="text-sm text-gray-700 order-2 sm:order-1">
+                Hiển thị 
+                <span class="font-semibold text-pink-600">@((ViewBag.PageNumber - 1) * (int)ViewBag.PageSize + 1)</span>
+                đến 
+                <span class="font-semibold text-pink-600">@Math.Min((int)ViewBag.PageNumber * (int)ViewBag.PageSize, (int)ViewBag.TotalCount)</span>
+                trong tổng số 
+                <span class="font-semibold text-pink-600">@ViewBag.TotalCount</span>
+                kết quả
+            </div>
+            
+            <nav class="flex items-center space-x-1 order-1 sm:order-2">
+                @if ((int)ViewBag.PageNumber > 1)
+                {
+                    <a asp-action="Index" 
+                       asp-route-page="@((int)ViewBag.PageNumber - 1)" 
+                       asp-route-searchString="@Model.SearchString"
+                       asp-route-membershipId="@Model.MembershipId"
+                       class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 bg-white/80 border border-gray-300 rounded-lg hover:bg-white hover:text-gray-800 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <span class="hidden sm:inline">Trước</span>
+                    </a>
+                }
+
+                <div class="hidden sm:flex items-center space-x-1">
+                    @for (int i = Math.Max(1, (int)ViewBag.PageNumber - 2); i <= Math.Min((int)ViewBag.TotalPages, (int)ViewBag.PageNumber + 2); i++)
+                    {
+                        if (i == (int)ViewBag.PageNumber)
+                        {
+                            <span class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-pink-500 to-indigo-600 border border-transparent rounded-lg shadow-md">
+                                @i
+                            </span>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" 
+                               asp-route-page="@i" 
+                               asp-route-searchString="@Model.SearchString"
+                               asp-route-membershipId="@Model.MembershipId"
+                               class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white/80 border border-gray-300 rounded-lg hover:bg-white hover:text-gray-800 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md">
+                                @i
+                            </a>
+                        }
+                    }
+                </div>
+
+                <!-- Mobile pagination info -->
+                <div class="sm:hidden flex items-center px-3 py-2 bg-gradient-to-r from-pink-500 to-indigo-600 text-white rounded-lg shadow-md">
+                    <span class="text-sm font-semibold">@ViewBag.PageNumber / @ViewBag.TotalPages</span>
+                </div>
+
+                @if ((int)ViewBag.PageNumber < (int)ViewBag.TotalPages)
+                {
+                    <a asp-action="Index" 
+                       asp-route-page="@((int)ViewBag.PageNumber + 1)" 
+                       asp-route-searchString="@Model.SearchString"
+                       asp-route-membershipId="@Model.MembershipId"
+                       class="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-600 bg-white/80 border border-gray-300 rounded-lg hover:bg-white hover:text-gray-800 hover:border-gray-400 transition-all duration-200 shadow-sm hover:shadow-md">
+                        <span class="hidden sm:inline">Sau</span>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                }
+            </nav>
+        </div>
+    }
+</div>

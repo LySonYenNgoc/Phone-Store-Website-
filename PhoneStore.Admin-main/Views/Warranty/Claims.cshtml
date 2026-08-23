@@ -1,0 +1,288 @@
+@model PhoneStore.ViewModels.WarrantyClaimListViewModel
+
+@{
+    ViewData["Title"] = "Quản lý khiếu nại bảo hành";
+}
+
+<div class="flex-1 p-6">
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Quản lý khiếu nại bảo hành
+            </h2>
+        </div>
+
+        <!-- Search and Filter Section -->
+        <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+            <form asp-action="Claims" method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Tìm kiếm</label>
+                    <input type="text" name="searchTerm" value="@Model.SearchTerm" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
+                           placeholder="Mã khiếu nại, mã bảo hành, tên khách hàng...">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Trạng thái</label>
+                    <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Tất cả trạng thái</option>
+                        @foreach (var statusOption in ViewBag.StatusList as List<string>)
+                        {
+                            <option value="@statusOption" selected="@(Model.Status == statusOption)">@statusOption</option>
+                        }
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        Tìm kiếm
+                    </button>
+                </div>
+                <div class="flex items-end">
+                    <a href="@Url.Action("Claims")" class="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center justify-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                        Xóa bộ lọc
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Statistics -->
+        <div class="px-6 py-4 bg-gradient-to-r from-orange-50 to-red-50 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-600">
+                    Tổng số khiếu nại: <span class="font-semibold text-gray-900">@Model.TotalClaims</span>
+                </div>
+                <div class="flex space-x-4 text-sm">
+                    <div class="flex items-center">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 mr-2">Chờ xử lý</span>
+                        <span class="font-medium">@Model.Claims.Count(c => c.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.Pending)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 mr-2">Đang xử lý</span>
+                        <span class="font-medium">@Model.Claims.Count(c => c.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.InProgress)</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 mr-2">Hoàn thành</span>
+                        <span class="font-medium">@Model.Claims.Count(c => c.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.Completed)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Claims Table -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã khiếu nại</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã bảo hành</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sản phẩm</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại vấn đề</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày gửi</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @if (Model.Claims?.Any() == true)
+                    {
+                        @foreach (var claim in Model.Claims)
+                        {
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="font-semibold text-gray-900">@claim.ClaimCode</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <a asp-action="Details" asp-route-id="@claim.WarrantyId" 
+                                       class="text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                                        @claim.Warranty.WarrantyCode
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div>
+                                        <div class="font-semibold text-gray-900">@claim.Warranty.Customer.Name</div>
+                                        <div class="text-sm text-gray-500">@claim.Warranty.Customer.Email</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="font-semibold text-gray-900">@claim.Warranty.OrderDetail.Product.ProductName</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-900">@claim.IssueType</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    @claim.SubmittedDate.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @if (claim.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.Pending)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">@claim.Status</span>
+                                    }
+                                    else if (claim.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.InProgress)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">@claim.Status</span>
+                                    }
+                                    else if (claim.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.Approved)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">@claim.Status</span>
+                                    }
+                                    else if (claim.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.Rejected)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">@claim.Status</span>
+                                    }
+                                    else if (claim.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.Completed)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">@claim.Status</span>
+                                    }
+                                    else if (claim.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.Cancelled)
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@claim.Status</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@claim.Status</span>
+                                    }
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <a asp-action="ClaimDetails" asp-route-id="@claim.WarrantyClaimId"
+                                           class="inline-flex items-center px-3 py-1 border border-blue-300 text-blue-700 rounded-md hover:bg-blue-50" 
+                                           title="Xem chi tiết">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                            </svg>
+                                        </a>
+                                        @if (claim.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.Pending || claim.Status == PhoneStore.Models.WarrantyClaim.ClaimStatus.InProgress)
+                                        {
+                                            <button onclick="updateClaimStatus(@claim.WarrantyClaimId, '@PhoneStore.Models.WarrantyClaim.ClaimStatus.InProgress')"
+                                                    class="inline-flex items-center px-3 py-1 border border-orange-300 text-orange-700 rounded-md hover:bg-orange-50" 
+                                                    title="Đánh dấu đang xử lý">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            </button>
+                                            <button onclick="updateClaimStatus(@claim.WarrantyClaimId, '@PhoneStore.Models.WarrantyClaim.ClaimStatus.Completed')"
+                                                    class="inline-flex items-center px-3 py-1 border border-green-300 text-green-700 rounded-md hover:bg-green-50" 
+                                                    title="Hoàn thành">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                    <path d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="px-6 py-8 text-center text-gray-500">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>
+                                </svg>
+                                Không có khiếu nại nào
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="px-6 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-center">
+                <nav class="flex items-center space-x-1">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a asp-action="Claims"
+                           asp-route-page="@(Model.CurrentPage - 1)"
+                           asp-route-searchTerm="@Model.SearchTerm"
+                           asp-route-status="@Model.Status"
+                           class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </a>
+                    }
+
+                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                    {
+                        @if (i == Model.CurrentPage)
+                        {
+                            <span class="px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-300">@i</span>
+                        }
+                        else
+                        {
+                            <a asp-action="Claims"
+                               asp-route-page="@i"
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-status="@Model.Status"
+                               class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 hover:bg-gray-50">@i</a>
+                        }
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a asp-action="Claims"
+                           asp-route-page="@(Model.CurrentPage + 1)"
+                           asp-route-searchTerm="@Model.SearchTerm"
+                           asp-route-status="@Model.Status"
+                           class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    }
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Auto-submit form when status changes
+            $('select[name="status"]').change(function() {
+                $(this).closest('form').submit();
+            });
+        });
+
+        function updateClaimStatus(claimId, status) {
+            if (confirm('Bạn có chắc chắn muốn cập nhật trạng thái khiếu nại này?')) {
+                // Add AJAX call to update claim status
+                $.ajax({
+                    url: '@Url.Action("UpdateClaimStatus")',
+                    type: 'POST',
+                    data: {
+                        claimId: claimId,
+                        status: status,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Có lỗi xảy ra khi cập nhật trạng thái.');
+                        }
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra khi cập nhật trạng thái.');
+                    }
+                });
+            }
+        }
+    </script>
+}

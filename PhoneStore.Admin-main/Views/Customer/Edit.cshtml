@@ -1,0 +1,104 @@
+@model PhoneStore.Models.Customer
+@{
+    ViewData["Title"] = "Chỉnh sửa khách hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4 py-6 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
+        <div class="animate-fade-in">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 bg-gradient-to-r from-pink-600 to-indigo-600 bg-clip-text text-transparent">
+                Chỉnh sửa khách hàng
+            </h1>
+            <p class="text-gray-600 mt-2 text-sm md:text-base">Cập nhật thông tin khách hàng #@Model.CustomerId</p>
+        </div>
+        <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
+            <a asp-action="Details" asp-route-id="@Model.CustomerId" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-green-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Chi tiết
+            </a>
+            <a asp-action="Index" class="inline-flex items-center px-4 py-2 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Quay lại danh sách
+            </a>
+        </div>
+    </div>
+
+    <!-- Edit Form -->
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Thông tin khách hàng</h3>
+            </div>
+            <div class="p-6">
+                <form asp-action="Edit" method="post" class="space-y-6">
+                    <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"></div>
+                    <input type="hidden" asp-for="CustomerId" />
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Họ tên -->
+                        <div class="space-y-2">
+                            <label asp-for="Name" class="block text-sm font-medium text-gray-700">Họ tên</label>
+                            <input asp-for="Name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+                            <span asp-validation-for="Name" class="text-red-500 text-sm"></span>
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="space-y-2">
+                            <label asp-for="Email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input asp-for="Email" type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+                            <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+                        </div>
+                        
+                        <!-- Số điện thoại -->
+                        <div class="space-y-2">
+                            <label asp-for="Phone" class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                            <input asp-for="Phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+                            <span asp-validation-for="Phone" class="text-red-500 text-sm"></span>
+                        </div>
+                        
+                        <!-- Năm sinh -->
+                        <div class="space-y-2">
+                            <label asp-for="BirthYear" class="block text-sm font-medium text-gray-700">Năm sinh</label>
+                            <input asp-for="BirthYear" type="number" min="1900" max="@DateTime.Now.Year" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+                            <span asp-validation-for="BirthYear" class="text-red-500 text-sm"></span>
+                        </div>
+                        
+                        <!-- Loại thành viên -->
+                        <div class="md:col-span-2 space-y-2">
+                            <label asp-for="MembershipId" class="block text-sm font-medium text-gray-700">Loại thành viên</label>
+                            <select asp-for="MembershipId" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" asp-items="ViewBag.Memberships">
+                                <option value="">-- Chọn loại thành viên --</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
+                        <button type="submit" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                            </svg>
+                            Lưu thay đổi
+                        </button>
+                        <a asp-action="Index" class="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-300">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,266 @@
+@model IEnumerable<PhoneStore.Customer.Models.Order>
+
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@functions {
+    public string GetStatusClass(string status)
+    {
+        return status switch
+        {
+            "Pending" or "Chờ xử lý" => "bg-yellow-100 text-yellow-800",
+            "Confirmed" or "Đã xác nhận" => "bg-blue-100 text-blue-800",
+            "Shipping" or "Đang giao" => "bg-indigo-100 text-indigo-800",
+            "Delivered" or "Đã giao" => "bg-green-100 text-green-800",
+            "Cancelled" or "Đã hủy" => "bg-red-100 text-red-800",
+            _ => "bg-gray-100 text-gray-800"
+        };
+    }
+
+    public string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "Pending" => "Chờ xử lý",
+            "Confirmed" => "Đã xác nhận",
+            "Shipping" => "Đang giao",
+            "Delivered" => "Đã giao",
+            "Cancelled" => "Đã hủy",
+            _ => status ?? "Không xác định"
+        };
+    }
+}
+
+<form id="antiForgeryForm" style="display: none;">
+    @Html.AntiForgeryToken()
+</form>
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Đơn hàng của tôi</h1>
+                    <p class="text-gray-600 mt-1">Theo dõi và quản lý đơn hàng của bạn</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <select id="statusFilter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="" selected="@(ViewBag.CurrentStatus == null || ViewBag.CurrentStatus == "" ? "selected" : null)">Tất cả đơn hàng</option>
+                        <option value="pending" selected="@(ViewBag.CurrentStatus == "pending" ? "selected" : null)">Chờ xử lý</option>
+                        <option value="confirmed" selected="@(ViewBag.CurrentStatus == "confirmed" ? "selected" : null)">Đã xác nhận</option>
+                        <option value="shipping" selected="@(ViewBag.CurrentStatus == "shipping" ? "selected" : null)">Đang giao</option>
+                        <option value="delivered" selected="@(ViewBag.CurrentStatus == "delivered" ? "selected" : null)">Đã giao</option>
+                        <option value="cancelled" selected="@(ViewBag.CurrentStatus == "cancelled" ? "selected" : null)">Đã hủy</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders List -->
+        <div class="space-y-4">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var order in Model)
+                {
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-4">
+                                    <div>
+                                        <h3 class="font-semibold text-lg text-gray-900">#@order.OrderId</h3>
+                                        <p class="text-sm text-gray-600">Đặt ngày: @order.OrderDate?.ToString("dd/MM/yyyy")</p>
+                                    </div>
+                                    <span class="@GetStatusClass(order.Status ?? "") text-xs font-medium px-2.5 py-0.5 rounded-full">
+                                        @GetStatusText(order.Status ?? "")
+                                    </span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">@string.Format("{0:N0}", order.TotalAmount) ₫</p>
+                                    <p class="text-sm text-gray-600">@order.OrderDetails?.Count() sản phẩm</p>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-200 pt-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    @if (order.OrderDetails != null)
+                                    {
+                                        @foreach (var detail in order.OrderDetails.Take(2))
+                                        {
+                                            <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                                                @{
+                                                    var productImage = detail.Product?.ProductImages?.FirstOrDefault();
+                                                }
+                                                @if (productImage != null)
+                                                {
+                                                    <img src="@productImage.ImageUrl" alt="@detail.Product?.ProductName" class="w-12 h-12 object-cover rounded-lg border border-gray-200">
+                                                }
+                                                else
+                                                {
+                                                    <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center border border-gray-200">
+                                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                        </svg>
+                                                    </div>
+                                                }
+                                                <div class="flex-1">
+                                                    <h4 class="font-medium text-gray-900">@detail.Product?.ProductName</h4>
+                                                    <p class="text-sm text-gray-600">Số lượng: @detail.Quantity</p>
+                                                    <p class="text-sm font-medium text-gray-900">@detail.Quantity x @string.Format("{0:N0}", detail.Product?.Price) ₫</p>
+                                                </div>
+                                            </div>
+                                        }
+                                        @if (order.OrderDetails.Count() > 2)
+                                        {
+                                            <div class="flex items-center justify-center p-3 bg-gray-50 rounded-lg">
+                                                <p class="text-sm text-gray-600">Và @(order.OrderDetails.Count() - 2) sản phẩm khác...</p>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <span>Địa chỉ giao hàng</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <a href="@Url.Action("OrderDetail", "Customer", new { id = order.OrderId })" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                                        Chi tiết
+                                    </a>
+                                    @if (order.Status == "Chờ xử lý")
+                                    {
+                                        <button onclick="cancelOrder(@order.OrderId)" class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                                            Hủy đơn
+                                        </button>
+                                    }
+                                    @if (order.Status == "Đã giao")
+                                    {
+                                        <button onclick="reorder(@order.OrderId)" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                                            Mua lại
+                                        </button>
+                                        <a href="@Url.Action("Review", "Customer", new { id = order.OrderId })" class="px-4 py-2 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                                            Đánh giá
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Empty State -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l-1 12H6L5 9z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Chưa có đơn hàng nào</h3>
+                    <p class="text-gray-600 mb-6">Bạn chưa có đơn hàng nào. Hãy khám phá và mua sắm ngay!</p>
+                    <a href="@Url.Action("Index", "Home")" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors">
+                        Mua sắm ngay
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-8 flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+                Hiển thị <span class="font-medium">1</span> đến <span class="font-medium">2</span> của <span class="font-medium">2</span> đơn hàng
+            </div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Previous</span>
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+                <a href="#" aria-current="page" class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                    1
+                </a>
+                <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <span class="sr-only">Next</span>
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Order status filter
+    const statusFilter = document.getElementById('statusFilter');
+    if (statusFilter) {
+        statusFilter.addEventListener('change', function() {
+            // Filter orders by status - redirect with query parameter
+            const status = this.value;
+            window.location.href = status ? `/Customer/Orders?status=${status}` : '/Customer/Orders';
+        });
+    }
+});
+
+// Cancel order function
+function cancelOrder(orderId) {
+    if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+        fetch('@Url.Action("CancelOrder", "Customer")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ id: orderId })
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload(); // Reload page to show updated status
+            } else {
+                alert('Có lỗi xảy ra khi hủy đơn hàng!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi hủy đơn hàng!');
+        });
+    }
+}
+
+// Reorder function
+function reorder(orderId) {
+    if (confirm('Bạn có muốn mua lại các sản phẩm trong đơn hàng này?')) {
+        fetch('@Url.Action("Reorder", "Customer")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ id: orderId })
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Đã thêm sản phẩm vào giỏ hàng!');
+                // Optionally redirect to cart
+                window.location.href = '@Url.Action("Index", "Cart")';
+            } else {
+                alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!');
+        });
+    }
+}
+</script>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QuickView Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        // Test function
+        function testQuickView() {
+            console.log('Testing QuickView...');
+            
+            // Test if functions exist
+            if (typeof quickView === 'function') {
+                console.log('✅ quickView function exists');
+            } else {
+                console.log('❌ quickView function missing');
+            }
+            
+            if (typeof showQuickViewModal === 'function') {
+                console.log('✅ showQuickViewModal function exists');
+            } else {
+                console.log('❌ showQuickViewModal function missing');
+            }
+            
+            // Test modal element
+            const modal = document.getElementById('quickViewModal');
+            if (modal) {
+                console.log('✅ QuickView modal element exists');
+            } else {
+                console.log('❌ QuickView modal element missing');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', testQuickView);
+    </script>
+</head>
+<body>
+    <h1>QuickView Test Page</h1>
+    <button onclick="console.log('Button clicked'); quickView(1, 'Test Product')">Test QuickView</button>
+    
+    <!-- Include the modal here -->
+    <div id="quickViewModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h2 class="text-xl font-bold">Xem nhanh sản phẩm</h2>
+                <button onclick="hideQuickViewModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="quickViewContent" class="p-4">
+                <div id="quickViewLoading" class="text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl mb-4"></i>
+                    <p>Đang tải...</p>
+                </div>
+                <div id="quickViewProduct" class="hidden">
+                    <h1 id="quickViewProductName">Product Name</h1>
+                    <p id="quickViewCategoryName">Category</p>
+                    <p id="quickViewDescription">Description</p>
+                    <span id="quickViewCurrentPrice">Price</span>
+                    <div id="quickViewColorSection" class="hidden">
+                        <div id="quickViewColors"></div>
+                    </div>
+                    <img id="quickViewMainImage" src="" alt="">
+                    <div id="quickViewThumbnails"></div>
+                    <div id="quickViewStock"></div>
+                    <input id="quickViewQuantity" value="1" type="number">
+                    <button id="quickViewAddToCart">Add to Cart</button>
+                    <a id="quickViewDetailsLink" href="#">View Details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/site.js"></script>
+</body>
+</html>

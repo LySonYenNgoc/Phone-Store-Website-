@@ -1,0 +1,460 @@
+@model PhoneStore.Customer.ViewModels.ProductListViewModel
+@{
+    ViewData["Title"] = "Sản phẩm";
+    ViewData["Description"] = "Khám phá bộ sưu tập điện thoại đa dạng với giá cả hợp lý";
+}
+
+<!-- Header Section -->
+<section class="bg-gradient-to-r from-gray-900 to-blue-900 text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center fade-in">
+            <h1 class="text-4xl lg:text-5xl font-bold mb-4">
+                Cửa hàng điện thoại
+            </h1>
+            <p class="text-xl text-gray-300">
+                Khám phá @Model.TotalProducts sản phẩm chất lượng cao
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Filters and Search Section -->
+<section class="bg-white border-b py-6 sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <form method="get" action="/Product" class="flex flex-wrap items-center gap-4">
+            <!-- Search -->
+            <div class="flex-1 min-w-64">
+                <div class="relative">
+                    <input type="text" name="search" value="@Model.CurrentSearch"
+                           placeholder="Tìm kiếm sản phẩm..."
+                           class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="min-w-48">
+                <select name="categoryId" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <option value="">Tất cả danh mục</option>                    @if (Model.Categories?.Any() == true)
+                    {                        @foreach (var category in Model.Categories)
+                        {
+                            @if (Model.CurrentCategoryId == category.CategoryId)
+                            {
+                                <option value="@category.CategoryId" selected>@category.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@category.CategoryId">@category.Name</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Price Range -->
+            <div class="min-w-48">                <select name="priceRange" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    <option value="">Tất cả giá</option>
+                    @if (Model.CurrentPriceRange == "0-5000000")
+                    {
+                        <option value="0-5000000" selected>Dưới 5 triệu</option>
+                    }
+                    else
+                    {
+                        <option value="0-5000000">Dưới 5 triệu</option>
+                    }
+                    @if (Model.CurrentPriceRange == "5000000-10000000")
+                    {
+                        <option value="5000000-10000000" selected>5 - 10 triệu</option>
+                    }
+                    else
+                    {
+                        <option value="5000000-10000000">5 - 10 triệu</option>
+                    }
+                    @if (Model.CurrentPriceRange == "10000000-20000000")
+                    {
+                        <option value="10000000-20000000" selected>10 - 20 triệu</option>
+                    }
+                    else
+                    {
+                        <option value="10000000-20000000">10 - 20 triệu</option>
+                    }
+                    @if (Model.CurrentPriceRange == "20000000-50000000")
+                    {
+                        <option value="20000000-50000000" selected>20 - 50 triệu</option>
+                    }
+                    else
+                    {
+                        <option value="20000000-50000000">20 - 50 triệu</option>
+                    }
+                    @if (Model.CurrentPriceRange == "50000000-")
+                    {
+                        <option value="50000000-" selected>Trên 50 triệu</option>
+                    }
+                    else
+                    {
+                        <option value="50000000-">Trên 50 triệu</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Sort By -->
+            <div class="min-w-48">                <select name="sortBy" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                    @if (string.IsNullOrEmpty(Model.CurrentSortBy))
+                    {
+                        <option value="" selected>Mặc định</option>
+                    }
+                    else
+                    {
+                        <option value="">Mặc định</option>
+                    }
+                    @if (Model.CurrentSortBy == "price_asc")
+                    {
+                        <option value="price_asc" selected>Giá thấp đến cao</option>
+                    }
+                    else
+                    {
+                        <option value="price_asc">Giá thấp đến cao</option>
+                    }
+                    @if (Model.CurrentSortBy == "price_desc")
+                    {
+                        <option value="price_desc" selected>Giá cao đến thấp</option>
+                    }
+                    else
+                    {
+                        <option value="price_desc">Giá cao đến thấp</option>
+                    }
+                    @if (Model.CurrentSortBy == "name_asc")
+                    {
+                        <option value="name_asc" selected>Tên A-Z</option>
+                    }
+                    else
+                    {
+                        <option value="name_asc">Tên A-Z</option>
+                    }
+                    @if (Model.CurrentSortBy == "name_desc")
+                    {
+                        <option value="name_desc" selected>Tên Z-A</option>
+                    }
+                    else
+                    {
+                        <option value="name_desc">Tên Z-A</option>
+                    }
+                    @if (Model.CurrentSortBy == "newest")
+                    {
+                        <option value="newest" selected>Mới nhất</option>
+                    }
+                    else
+                    {
+                        <option value="newest">Mới nhất</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Filter Button -->
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors btn-animate">
+                <i class="fas fa-filter mr-2"></i>
+                Lọc
+            </button>
+
+            <!-- Clear Filters -->
+            @if (!string.IsNullOrEmpty(Model.CurrentSearch) || Model.CurrentCategoryId.HasValue || Model.CurrentColorId.HasValue)
+            {
+                <a href="/Product" class="text-gray-600 hover:text-gray-900 px-4 py-3 transition-colors">
+                    <i class="fas fa-times mr-2"></i>
+                    Xóa bộ lọc
+                </a>            }
+        </form>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="py-12 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Results Info -->
+        <div class="flex items-center justify-between mb-8 fade-in">
+            <div class="text-gray-600">
+                Hiển thị @((Model.CurrentPage - 1) * Model.PageSize + 1) - @Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalProducts)
+                trong tổng số @Model.TotalProducts sản phẩm
+            </div>
+
+            <!-- View Toggle -->
+            <div class="flex items-center space-x-2">
+                <button id="gridView" class="p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-th-large"></i>
+                </button>
+                <button id="listView" class="p-2 text-gray-600 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+
+        @if (Model.Products?.Any() == true)
+        {
+            <!-- Grid View -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @foreach (var product in Model.Products)
+                {
+                    <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all fade-in">
+                        <div class="relative group">
+                            <img src="@(product.PrimaryImageUrl ?? "https://via.placeholder.com/300x300/EEE/999?text=No+Image")"
+                                 alt="@product.Name"
+                                 class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300">
+
+                            @if (product.DiscountPercentage > 0)
+                            {
+                                <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                    -@product.DiscountPercentage%
+                                </div>
+                            }                            <!-- Quick Actions -->
+                            <div class="absolute top-4 right-4 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="addToWishlist(@product.Id, '@product.Name')"
+                                        class="bg-white text-gray-600 hover:text-red-500 p-2 rounded-full shadow-lg transition-colors"
+                                        title="Thêm vào yêu thích">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button onclick="quickView(@product.Id, '@product.Name')"
+                                        class="bg-white text-gray-600 hover:text-blue-500 p-2 rounded-full shadow-lg transition-colors"
+                                        title="Xem nhanh">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <!-- Quick Add to Cart -->
+                            <div class="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button onclick="addToCart(@product.Id, '@product.Name', @(product.DiscountPrice ?? product.Price))"
+                                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition-colors btn-animate">
+                                    <i class="fas fa-cart-plus mr-2"></i>
+                                    Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-6">                            <h3 class="font-semibold text-lg text-gray-900 mb-2 line-clamp-2">
+                                <a href="/Product/Detail/@product.Id" class="hover:text-blue-600 transition-colors">@product.Name</a>
+                            </h3>
+                            <p class="text-gray-600 text-sm mb-3 line-clamp-2">@product.Description</p>
+
+                            <!-- Price -->
+                            <div class="flex items-center justify-between mb-4">
+                                @if (product.DiscountPrice.HasValue && product.DiscountPrice < product.Price)
+                                {
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-2xl font-bold text-red-600">
+                                            @product.DiscountPrice.Value.ToString("N0") ₫
+                                        </span>
+                                        <span class="text-lg text-gray-500 line-through">
+                                            @product.Price.ToString("N0") ₫
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-2xl font-bold text-gray-900">
+                                        @product.Price.ToString("N0") ₫
+                                    </span>
+                                }
+                            </div>
+
+                            <!-- Rating and Stock -->
+                            <div class="flex items-center justify-between text-sm text-gray-500">
+                                <div class="flex items-center space-x-1">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fas fa-star text-yellow-400"></i>
+                                    }
+                                    <span class="ml-1">(4.8)</span>
+                                </div>
+
+                                <span class="text-green-600 font-medium">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Còn hàng
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- List View (Hidden by default) -->
+            <div id="productList" class="hidden space-y-6">
+                @foreach (var product in Model.Products)
+                {
+                    <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all fade-in">
+                        <div class="flex flex-col md:flex-row">
+                            <div class="md:w-1/3 relative group">
+                                <img src="@(product.PrimaryImageUrl ?? "https://via.placeholder.com/400x300/EEE/999?text=No+Image")"
+                                     alt="@product.Name"
+                                     class="w-full h-64 md:h-full object-cover group-hover:scale-105 transition-transform duration-300">
+
+                                @if (product.DiscountPercentage > 0)
+                                {
+                                    <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                        -@product.DiscountPercentage%
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                                <div>                                    <h3 class="font-semibold text-xl text-gray-900 mb-2">
+                                        <a href="/Product/Detail/@product.Id" class="hover:text-blue-600 transition-colors">@product.Name</a>
+                                    </h3>
+                                    <p class="text-gray-600 mb-4">@product.Description</p>
+
+                                    <div class="flex items-center space-x-4 mb-4 text-sm text-gray-500">
+                                        <div class="flex items-center space-x-1">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="fas fa-star text-yellow-400"></i>
+                                            }
+                                            <span class="ml-1">(4.8)</span>
+                                        </div>
+
+                                        <span class="text-green-600 font-medium">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            Còn hàng
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    @if (product.DiscountPrice.HasValue && product.DiscountPrice < product.Price)
+                                    {
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-3xl font-bold text-red-600">
+                                                @product.DiscountPrice.Value.ToString("N0") ₫
+                                            </span>
+                                            <span class="text-xl text-gray-500 line-through">
+                                                @product.Price.ToString("N0") ₫
+                                            </span>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-3xl font-bold text-gray-900">
+                                            @product.Price.ToString("N0") ₫
+                                        </span>
+                                    }                                    <div class="flex items-center space-x-3">
+                                        <button onclick="addToWishlist(@product.Id, '@product.Name')"
+                                                class="text-gray-600 hover:text-red-500 p-2 transition-colors"
+                                                title="Thêm vào yêu thích">
+                                            <i class="far fa-heart text-xl"></i>
+                                        </button>
+                                        <button onclick="addToCart(@product.Id, '@product.Name', @(product.DiscountPrice ?? product.Price))"
+                                                class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors btn-animate">
+                                            <i class="fas fa-cart-plus mr-2"></i>
+                                            Thêm vào giỏ
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-16 fade-in">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border inline-block max-w-lg">
+                    <i class="fas fa-search text-6xl text-gray-300 mb-4 block"></i>
+                    <h3 class="text-2xl font-semibold text-gray-900 mb-2">Không tìm thấy sản phẩm</h3>
+                    <p class="text-gray-500 mb-6">
+                        Rất tiếc, chúng tôi không tìm thấy sản phẩm nào phù hợp với từ khóa 
+                        <span class="font-bold text-blue-600">"@Model.CurrentSearch"</span>.
+                    </p>
+                    <a href="/Product" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all shadow-lg hover:shadow-blue-500/25">
+                        <i class="fas fa-arrow-left mr-2"></i>
+                        Quay lại cửa hàng
+                    </a>
+                </div>
+            </div>
+        }
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="flex justify-center mt-12 fade-in">
+                <nav class="flex items-center space-x-2">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a asp-action="Index"
+                           asp-route-page="@(Model.CurrentPage - 1)"
+                           asp-route-search="@Model.CurrentSearch"
+                           asp-route-categoryId="@Model.CurrentCategoryId"
+                           asp-route-priceRange="@Model.CurrentPriceRange"
+                           asp-route-sortBy="@Model.CurrentSortBy"
+                           class="px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    }
+
+                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                    {
+                        @if (i == Model.CurrentPage)
+                        {
+                            <span class="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold">@i</span>
+                        }
+                        else
+                        {
+                            <a asp-action="Index"
+                               asp-route-page="@i"
+                               asp-route-search="@Model.CurrentSearch"
+                               asp-route-categoryId="@Model.CurrentCategoryId"
+                               asp-route-priceRange="@Model.CurrentPriceRange"
+                               asp-route-sortBy="@Model.CurrentSortBy"
+                               class="px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors">
+                                @i
+                            </a>
+                        }
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a asp-action="Index"
+                           asp-route-page="@(Model.CurrentPage + 1)"
+                           asp-route-search="@Model.CurrentSearch"
+                           asp-route-categoryId="@Model.CurrentCategoryId"
+                           asp-route-priceRange="@Model.CurrentPriceRange"
+                           asp-route-sortBy="@Model.CurrentSortBy"
+                           class="px-3 py-2 text-gray-600 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    }
+                </nav>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const gridViewBtn = document.getElementById('gridView');
+            const listViewBtn = document.getElementById('listView');
+            const productGrid = document.getElementById('productGrid');
+            const productList = document.getElementById('productList');
+
+            // View toggle functionality
+            gridViewBtn.addEventListener('click', function() {
+                productGrid.classList.remove('hidden');
+                productList.classList.add('hidden');
+                gridViewBtn.classList.add('text-blue-600');
+                listViewBtn.classList.remove('text-blue-600');
+            });
+
+            listViewBtn.addEventListener('click', function() {
+                productGrid.classList.add('hidden');
+                productList.classList.remove('hidden');
+                listViewBtn.classList.add('text-blue-600');
+                gridViewBtn.classList.remove('text-blue-600');
+            });
+
+            // Auto-submit form on select change
+            document.querySelectorAll('select').forEach(select => {
+                select.addEventListener('change', function() {
+                    this.form.submit();
+                });
+            });
+        });
+    </script>
+}

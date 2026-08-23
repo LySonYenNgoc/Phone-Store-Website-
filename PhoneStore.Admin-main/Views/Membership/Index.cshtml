@@ -1,0 +1,438 @@
+@model IEnumerable<PhoneStore.Models.Membership>
+@{
+    ViewData["Title"] = "Quản lý gói thành viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Quản lý gói thành viên</h2>
+            <button onclick="showAddModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Thêm gói thành viên mới
+            </button>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên gói</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mô tả</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giảm giá (%)</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Chi tiêu tối thiểu</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số khách hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach (var membership in Model)
+                    {
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@membership.MembershipId</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">@membership.Name</td>
+                            <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                                @(string.IsNullOrEmpty(membership.Description) ? "Không có mô tả" : membership.Description)
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                @(membership.DiscountPercentage?.ToString("0.##") ?? "0")%
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                @(membership.MinimumSpend?.ToString("N0") ?? "0") VNĐ
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@membership.Customers.Count</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full @(membership.IsActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800")">
+                                    @(membership.IsActive ? "Hoạt động" : "Vô hiệu hóa")
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="showDetailsModal(@membership.MembershipId)"
+                                        class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-lg mr-2 text-xs">
+                                    Chi tiết
+                                </button>
+                                <button onclick="showEditModal(@membership.MembershipId)"
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg mr-2 text-xs">
+                                    Sửa
+                                </button>
+                                <button onclick="toggleStatus(@membership.MembershipId, @membership.IsActive.ToString().ToLower())"
+                                        class="@(membership.IsActive ? "bg-orange-500 hover:bg-orange-600" : "bg-green-500 hover:bg-green-600") text-white px-3 py-1 rounded-lg mr-2 text-xs">
+                                    @(membership.IsActive ? "Vô hiệu hóa" : "Kích hoạt")
+                                </button>
+                                <button onclick="deleteMembership(@membership.MembershipId)"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-xs">
+                                    Xóa
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-8">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">Chưa có gói thành viên</h3>
+                <p class="mt-1 text-sm text-gray-500">Bắt đầu bằng cách tạo gói thành viên mới.</p>
+                <div class="mt-6">
+                    <button onclick="showAddModal()" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                        <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Thêm gói thành viên
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal thêm gói thành viên -->
+<div id="addModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Thêm gói thành viên mới</h3>
+            <form id="addForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tên gói thành viên *</label>
+                    <input type="text" id="addName" name="name" required maxlength="100"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả</label>
+                    <textarea id="addDescription" name="description" maxlength="500" rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phần trăm giảm giá (%)</label>
+                    <input type="number" id="addDiscountPercentage" name="discountPercentage" min="0" max="100" step="0.01"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Chi tiêu tối thiểu (VNĐ)</label>
+                    <input type="number" id="addMinimumSpend" name="minimumSpend" min="0" step="1000"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="addIsActive" name="isActive" checked
+                               class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
+                        <span class="ml-2 text-sm text-gray-700">Kích hoạt gói thành viên</span>
+                    </label>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideAddModal()"
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        Hủy
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Thêm
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal sửa gói thành viên -->
+<div id="editModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Sửa gói thành viên</h3>
+            <form id="editForm">
+                <input type="hidden" id="editMembershipId" name="membershipId">
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tên gói thành viên *</label>
+                    <input type="text" id="editName" name="name" required maxlength="100"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả</label>
+                    <textarea id="editDescription" name="description" maxlength="500" rows="3"
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phần trăm giảm giá (%)</label>
+                    <input type="number" id="editDiscountPercentage" name="discountPercentage" min="0" max="100" step="0.01"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Chi tiêu tối thiểu (VNĐ)</label>
+                    <input type="number" id="editMinimumSpend" name="minimumSpend" min="0" step="1000"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="mb-4">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="editIsActive" name="isActive"
+                               class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500">
+                        <span class="ml-2 text-sm text-gray-700">Kích hoạt gói thành viên</span>
+                    </label>
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideEditModal()"
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        Hủy
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                        Cập nhật
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal chi tiết gói thành viên -->
+<div id="detailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Chi tiết gói thành viên</h3>
+            <div id="detailsContent">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="flex justify-end mt-4">
+                <button type="button" onclick="hideDetailsModal()"
+                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Modal functions
+function showAddModal() {
+    document.getElementById('addModal').classList.remove('hidden');
+    document.getElementById('addForm').reset();
+    document.getElementById('addIsActive').checked = true;
+}
+
+function hideAddModal() {
+    document.getElementById('addModal').classList.add('hidden');
+}
+
+function showEditModal(id) {
+    fetch(`/Membership/GetDetails/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const membership = data.data;
+                document.getElementById('editMembershipId').value = membership.membershipId;
+                document.getElementById('editName').value = membership.name;
+                document.getElementById('editDescription').value = membership.description || '';
+                document.getElementById('editDiscountPercentage').value = membership.discountPercentage || '';
+                document.getElementById('editMinimumSpend').value = membership.minimumSpend || '';
+                document.getElementById('editIsActive').checked = membership.isActive;
+
+                document.getElementById('editModal').classList.remove('hidden');
+            } else {
+                showNotification(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Có lỗi xảy ra khi tải thông tin gói thành viên', 'error');
+        });
+}
+
+function hideEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+}
+
+function showDetailsModal(id) {
+    fetch(`/Membership/GetDetails/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const membership = data.data;
+                const content = `
+                    <div class="space-y-3">
+                        <div><strong>ID:</strong> ${membership.membershipId}</div>
+                        <div><strong>Tên gói:</strong> ${membership.name}</div>
+                        <div><strong>Mô tả:</strong> ${membership.description || 'Không có mô tả'}</div>
+                        <div><strong>Giảm giá:</strong> ${membership.discountPercentage || 0}%</div>
+                        <div><strong>Chi tiêu tối thiểu:</strong> ${(membership.minimumSpend || 0).toLocaleString()} VNĐ</div>
+                        <div><strong>Số khách hàng:</strong> ${membership.customerCount}</div>
+                        <div><strong>Trạng thái:</strong>
+                            <span class="px-2 py-1 text-xs rounded-full ${membership.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                ${membership.isActive ? 'Hoạt động' : 'Vô hiệu hóa'}
+                            </span>
+                        </div>
+                        <div><strong>Ngày tạo:</strong> ${membership.createdDate}</div>
+                        ${membership.updatedDate ? `<div><strong>Ngày cập nhật:</strong> ${membership.updatedDate}</div>` : ''}
+                    </div>
+                `;
+                document.getElementById('detailsContent').innerHTML = content;
+                document.getElementById('detailsModal').classList.remove('hidden');
+            } else {
+                showNotification(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Có lỗi xảy ra khi tải thông tin gói thành viên', 'error');
+        });
+}
+
+function hideDetailsModal() {
+    document.getElementById('detailsModal').classList.add('hidden');
+}
+
+// Form submissions
+document.getElementById('addForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = {
+        name: document.getElementById('addName').value,
+        description: document.getElementById('addDescription').value,
+        discountPercentage: parseFloat(document.getElementById('addDiscountPercentage').value) || null,
+        minimumSpend: parseFloat(document.getElementById('addMinimumSpend').value) || null,
+        isActive: document.getElementById('addIsActive').checked
+    };    fetch('/Membership/Create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('input[name="__RequestVerificationToken"]').value
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            hideAddModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showNotification(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Có lỗi xảy ra', 'error');
+    });
+});
+
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = {
+        membershipId: parseInt(document.getElementById('editMembershipId').value),
+        name: document.getElementById('editName').value,
+        description: document.getElementById('editDescription').value,
+        discountPercentage: parseFloat(document.getElementById('editDiscountPercentage').value) || null,
+        minimumSpend: parseFloat(document.getElementById('editMinimumSpend').value) || null,
+        isActive: document.getElementById('editIsActive').checked
+    };    fetch('/Membership/Edit', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('input[name="__RequestVerificationToken"]').value
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            hideEditModal();
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showNotification(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Có lỗi xảy ra', 'error');
+    });
+});
+
+// Actions
+function toggleStatus(id, currentStatus) {
+    const action = currentStatus ? 'vô hiệu hóa' : 'kích hoạt';
+    if (confirm(`Bạn có chắc muốn ${action} gói thành viên này?`)) {        fetch('/Membership/ToggleStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRF-TOKEN': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: `id=${id}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Có lỗi xảy ra', 'error');
+        });
+    }
+}
+
+function deleteMembership(id) {
+    if (confirm('Bạn có chắc muốn xóa gói thành viên này? Hành động này không thể hoàn tác.')) {        fetch(`/Membership/Delete/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name="__RequestVerificationToken"]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Có lỗi xảy ra', 'error');
+        });
+    }
+}
+
+// Notification function
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    }`;
+    notification.textContent = message;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+</script>
+
+@Html.AntiForgeryToken()

@@ -1,0 +1,43 @@
+@{
+    Layout = null;
+    ViewData["Title"] = "Debug Admin Login";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <h1>Debug Admin Login</h1>
+    
+    <h2>Password Hash Test</h2>
+    <p><strong>Password:</strong> 123</p>
+    <p><strong>Generated Hash:</strong> @ViewBag.PasswordHash</p>
+    <p><strong>Expected Hash:</strong> @ViewBag.ExpectedHash</p>
+    <p><strong>Hash Match:</strong> @ViewBag.HashMatch</p>
+    
+    <h2>Database Test</h2>
+    <p><strong>Admin Found:</strong> @ViewBag.AdminFound</p>
+    <p><strong>Total Admins:</strong> @ViewBag.AdminCount</p>
+    @if (ViewBag.AdminFound)
+    {
+        <p><strong>Admin Data:</strong> @ViewBag.AdminData</p>
+    }
+    
+    <h2>Login Test</h2>
+    <form action="/AdminAccount/Login" method="post">
+        @Html.AntiForgeryToken()
+        <p>
+            <label>Username:</label><br>
+            <input type="text" name="username" value="admin" required>
+        </p>
+        <p>
+            <label>Password:</label><br>
+            <input type="password" name="password" value="123" required>
+        </p>
+        <p>
+            <button type="submit">Login</button>
+        </p>
+    </form>
+</body>
+</html>

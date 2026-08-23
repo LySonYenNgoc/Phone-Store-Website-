@@ -1,0 +1,179 @@
+@model IEnumerable<PhoneStore.Models.Coupon>
+@using PhoneStore.Controllers
+
+@{
+    ViewData["Title"] = "Quản lý Coupon";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Quản lý Coupon</h1>
+            <a href="@Url.Action("Create")" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                Tạo Coupon Mới
+            </a>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Search and Filter Form -->
+        <form method="get" class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="searchTerm" class="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm theo mã</label>
+                    <input type="text" name="searchTerm" id="searchTerm" value="@ViewBag.SearchTerm"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Nhập mã coupon...">
+                </div>
+                <div>
+                    <label for="statusFilter" class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                    <select name="statusFilter" id="statusFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Tất cả</option>                        <option value="active" selected="@(ViewBag.StatusFilter == "active")">Hoạt động</option>
+                        <option value="expired" selected="@(ViewBag.StatusFilter == "expired")">Hết hạn</option>
+                        <option value="used" selected="@(ViewBag.StatusFilter == "used")">Đã sử dụng</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition duration-200 w-full">
+                        Tìm kiếm
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-green-800">Tổng số Coupon</h3>
+                <p class="text-2xl font-bold text-green-900">@ViewBag.TotalCount</p>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-blue-800">Hoạt động</h3>
+                <p class="text-2xl font-bold text-blue-900">@Model.Count(c => CouponController.GetCouponStatus(c) == "active")</p>
+            </div>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-red-800">Hết hạn</h3>
+                <p class="text-2xl font-bold text-red-900">@Model.Count(c => CouponController.GetCouponStatus(c) == "expired")</p>
+            </div>
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-gray-800">Đã sử dụng</h3>
+                <p class="text-2xl font-bold text-gray-900">@Model.Count(c => CouponController.GetCouponStatus(c) == "used")</p>
+            </div>
+        </div>
+
+        <!-- Coupons Table -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mã Coupon</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số tiền giảm</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày tạo</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày hết hạn</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">@Html.DisplayFor(modelItem => item.Code)</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">@Html.DisplayFor(modelItem => item.DiscountAmount) VNĐ</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">@item.CreatedDate?.ToString("dd/MM/yyyy")</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">@item.ExpiryDate?.ToString("dd/MM/yyyy")</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full @CouponController.GetCouponStatusClass(item)">
+                                    @CouponController.GetCouponStatusText(item)
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <div class="flex space-x-2">
+                                    <a href="@Url.Action("Details", new { id = item.CouponId })"
+                                       class="text-blue-600 hover:text-blue-800 transition duration-200">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="@Url.Action("Edit", new { id = item.CouponId })"
+                                       class="text-green-600 hover:text-green-800 transition duration-200">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                    </a>
+                                    @if (CouponController.GetCouponStatus(item) == "active")
+                                    {
+                                        <form method="post" action="@Url.Action("ToggleStatus", new { id = item.CouponId })" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="text-yellow-600 hover:text-yellow-800 transition duration-200"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn đánh dấu coupon này là đã sử dụng?')">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    }
+                                    <a href="@Url.Action("Delete", new { id = item.CouponId })"
+                                       class="text-red-600 hover:text-red-800 transition duration-200">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (ViewBag.TotalPages > 1)
+        {
+            <div class="flex items-center justify-between mt-6">
+                <div class="text-sm text-gray-700">
+                    Hiển thị @((ViewBag.CurrentPage - 1) * ViewBag.PageSize + 1) - @(Math.Min(ViewBag.CurrentPage * ViewBag.PageSize, ViewBag.TotalCount))
+                    trong tổng số @ViewBag.TotalCount kết quả
+                </div>
+                <div class="flex space-x-2">
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        @if (i == ViewBag.CurrentPage)
+                        {
+                            <span class="px-3 py-2 bg-blue-500 text-white rounded-lg">@i</span>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Index", new { page = i, searchTerm = ViewBag.SearchTerm, statusFilter = ViewBag.StatusFilter })"
+                               class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200">@i</a>
+                        }
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

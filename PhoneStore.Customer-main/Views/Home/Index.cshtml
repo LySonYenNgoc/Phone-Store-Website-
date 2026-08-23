@@ -1,0 +1,365 @@
+﻿@using PhoneStore.Customer.ViewModels
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Trang chủ";
+    ViewData["Description"] = "Cửa hàng điện thoại uy tín với đa dạng sản phẩm chính hãng, giá cả hợp lý";
+}
+
+<!-- Hero Section -->
+<section class="relative bg-gradient-to-r from-blue-600 to-purple-700 text-white overflow-hidden">
+    <div class="absolute inset-0 bg-black opacity-20"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="fade-in">
+                <h1 class="text-4xl lg:text-6xl font-bold leading-tight mb-6">
+                    Điện thoại
+                    <span class="text-yellow-400">Chính hãng</span>
+                    <br>Giá tốt nhất
+                </h1>
+                <p class="text-xl mb-8 text-gray-200">
+                    Khám phá bộ sưu tập điện thoại mới nhất từ các thương hiệu hàng đầu thế giới.
+                    Chất lượng đảm bảo, giá cả hợp lý, dịch vụ tận tâm.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a asp-controller="Product" asp-action="Index"
+                       class="bg-yellow-400 text-black px-8 py-4 rounded-lg font-semibold hover:bg-yellow-300 transition-all btn-animate inline-flex items-center justify-center">
+                        <i class="fas fa-shopping-bag mr-2"></i>
+                        Mua ngay
+                    </a>
+                    <a href="#featured-products"
+                       class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-all btn-animate inline-flex items-center justify-center">
+                        <i class="fas fa-arrow-down mr-2"></i>
+                        Khám phá
+                    </a>
+                </div>
+            </div>
+            <div class="fade-in lg:text-right">
+                <div class="relative">
+                    <div class="absolute -top-4 -right-4 w-72 h-72 bg-yellow-400 rounded-full opacity-20 animate-pulse"></div>
+                    <div class="absolute -bottom-4 -left-4 w-48 h-48 bg-purple-400 rounded-full opacity-20 animate-pulse"></div>
+                    <img src="~/images/iphone-16-pro-max-2-e60e97f6aab9da62da17359303639457-480-0.png" alt="Featured Phones"
+                         class="relative z-10 max-w-full h-auto mx-auto image-hover"
+                         onerror="this.src='/images/no-image.svg'">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating elements -->
+    <div class="absolute top-20 left-10 w-16 h-16 bg-white bg-opacity-20 rounded-full animate-bounce"></div>
+    <div class="absolute bottom-20 right-20 w-8 h-8 bg-yellow-400 bg-opacity-30 rounded-full animate-pulse"></div>
+    <div class="absolute top-1/2 right-10 w-12 h-12 bg-purple-400 bg-opacity-20 rounded-full animate-bounce" style="animation-delay: 1s;"></div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            <div class="fade-in">
+                <div class="text-3xl lg:text-4xl font-bold text-blue-600 mb-2">1000+</div>
+                <div class="text-gray-600">Sản phẩm</div>
+            </div>
+            <div class="fade-in">
+                <div class="text-3xl lg:text-4xl font-bold text-green-600 mb-2">5000+</div>
+                <div class="text-gray-600">Khách hàng</div>
+            </div>
+            <div class="fade-in">
+                <div class="text-3xl lg:text-4xl font-bold text-purple-600 mb-2">99%</div>
+                <div class="text-gray-600">Hài lòng</div>
+            </div>
+            <div class="fade-in">
+                <div class="text-3xl lg:text-4xl font-bold text-red-600 mb-2">24/7</div>
+                <div class="text-gray-600">Hỗ trợ</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section id="featured-products" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 fade-in">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Sản phẩm nổi bật
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Những chiếc điện thoại được khách hàng yêu thích nhất với công nghệ tiên tiến và thiết kế đẹp mắt
+            </p>
+        </div>
+
+        @if (Model?.FeaturedProducts?.Any() == true)
+        {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">                @foreach (var product in Model.FeaturedProducts)
+                {
+                    <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden fade-in">
+                        <div class="relative">
+                            <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId"
+                               class="block">
+                                <img src="@(product.PrimaryImageUrl ?? "~/images/no-image.svg")"
+                                     alt="@product.Name"
+                                     class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300"
+                                     onerror="this.src='/images/iphone-16-pro-max-2-e60e97f6aab9da62da17359303639457-480-0.png'">
+                            </a>
+
+                            @if (product.DiscountPercentage > 0)
+                            {
+                                <div class="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                    -@product.DiscountPercentage%
+                                </div>
+                            }
+
+                            <div class="absolute top-4 right-4 opacity-0 hover:opacity-100 transition-opacity">
+                                <button class="bg-white text-gray-600 hover:text-red-500 p-2 rounded-full shadow-lg transition-colors">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId"
+                               class="block hover:text-blue-600 transition-colors">
+                                <h3 class="font-semibold text-lg text-gray-900 mb-2 line-clamp-2">@product.Name</h3>
+                            </a>
+                            <p class="text-gray-600 text-sm mb-3 line-clamp-2">@product.Description</p>
+
+                            <div class="flex items-center justify-between mb-4">
+                                @if (product.DiscountPrice.HasValue && product.DiscountPrice < product.Price)
+                                {
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-2xl font-bold text-red-600">
+                                            @product.DiscountPrice.Value.ToString("N0") ₫
+                                        </span>
+                                        <span class="text-lg text-gray-500 line-through">
+                                            @product.Price.ToString("N0") ₫
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-2xl font-bold text-gray-900">
+                                        @product.Price.ToString("N0") ₫
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-1">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                    }
+                                    <span class="text-sm text-gray-500 ml-1">(4.8)</span>
+                                </div>
+
+                                <button onclick="addToCart(@product.ProductId, '@product.Name', @(product.DiscountPrice ?? product.Price))"
+                                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors btn-animate">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-12">
+                <i class="fas fa-mobile-alt text-6xl text-gray-300 mb-4"></i>
+                <p class="text-xl text-gray-500">Không có sản phẩm nổi bật nào</p>
+            </div>
+        }
+
+        <div class="text-center mt-12 fade-in">
+            <a asp-controller="Product" asp-action="Index"
+               class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors btn-animate">
+                Xem tất cả sản phẩm
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 fade-in">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Danh mục sản phẩm
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Khám phá các danh mục điện thoại đa dạng từ các thương hiệu hàng đầu
+            </p>
+        </div>
+
+        @if (Model?.Categories?.Any() == true)
+        {
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+                @foreach (var category in Model.Categories)
+                {                    <a asp-controller="Product" asp-action="Index" asp-route-categoryId="@category.CategoryId"
+                       class="group text-center slide-in-left">
+                        <div class="bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl p-8 mb-4 group-hover:scale-105 transition-transform">
+                            <i class="fas fa-mobile-alt text-3xl text-white"></i>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                            @category.Name
+                        </h3>
+                        <p class="text-sm text-gray-500">@category.ProductCount sản phẩm</p>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Latest Products Section -->
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 fade-in">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Sản phẩm mới nhất
+            </h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                Cập nhật những mẫu điện thoại mới nhất với công nghệ tiên tiến
+            </p>
+        </div>
+
+        @if (Model?.LatestProducts?.Any() == true)
+        {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">                @foreach (var product in Model.LatestProducts)
+                {
+                    <div class="product-card bg-white rounded-2xl shadow-lg overflow-hidden slide-in-right">
+                        <div class="relative">
+                            <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId"
+                               class="block">
+                                <img src="@(product.PrimaryImageUrl ?? "~/images/no-image.svg")"
+                                     alt="@product.Name"
+                                     class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300"
+                                     onerror="this.src='/images/no-image.svg'">
+                            </a>
+
+                            <div class="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+                                Mới
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId"
+                               class="block hover:text-blue-600 transition-colors">
+                                <h3 class="font-semibold text-lg text-gray-900 mb-2">@product.Name</h3>
+                            </a>
+                            <p class="text-gray-600 text-sm mb-3 line-clamp-2">@product.Description</p>
+
+                            <div class="flex items-center justify-between">
+                                @if (product.DiscountPrice.HasValue && product.DiscountPrice < product.Price)
+                                {
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xl font-bold text-red-600">
+                                            @product.DiscountPrice.Value.ToString("N0") ₫
+                                        </span>
+                                        <span class="text-sm text-gray-500 line-through">
+                                            @product.Price.ToString("N0") ₫
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-xl font-bold text-gray-900">
+                                        @product.Price.ToString("N0") ₫
+                                    </span>
+                                }
+
+                                <button onclick="addToCart(@product.ProductId, '@product.Name', @(product.DiscountPrice ?? product.Price))"
+                                        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors btn-animate">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="text-center mt-12 fade-in">
+            <a asp-controller="Product" asp-action="Index" asp-route-sortBy="newest"
+               class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors btn-animate">
+                Xem sản phẩm mới
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16 fade-in">
+            <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+                Tại sao chọn PhoneStore?
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="text-center fade-in">
+                <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Chính hãng 100%</h3>
+                <p class="text-gray-600">Tất cả sản phẩm đều được nhập khẩu chính hãng với đầy đủ giấy tờ</p>
+            </div>
+
+            <div class="text-center fade-in">
+                <div class="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shipping-fast text-2xl text-green-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Giao hàng nhanh</h3>
+                <p class="text-gray-600">Giao hàng trong ngày tại TP.HCM, 1-2 ngày cho các tỉnh khác</p>
+            </div>
+
+            <div class="text-center fade-in">
+                <div class="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-tools text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Bảo hành chu đáo</h3>
+                <p class="text-gray-600">Bảo hành chính hãng, hỗ trợ kỹ thuật 24/7</p>
+            </div>
+
+            <div class="text-center fade-in">
+                <div class="bg-red-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-percentage text-2xl text-red-600"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Giá tốt nhất</h3>
+                <p class="text-gray-600">Cam kết giá tốt nhất thị trường, hoàn tiền nếu có nơi bán rẻ hơn</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Custom animations for home page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hero section animation
+            anime.timeline({
+                easing: 'easeOutExpo',
+            })
+            .add({
+                targets: '.hero-title',
+                translateY: [100, 0],
+                opacity: [0, 1],
+                duration: 1000,
+            })
+            .add({
+                targets: '.hero-subtitle',
+                translateY: [50, 0],
+                opacity: [0, 1],
+                duration: 800,
+            }, '-=500')
+            .add({
+                targets: '.hero-buttons',
+                translateY: [30, 0],
+                opacity: [0, 1],
+                duration: 600,
+            }, '-=400');
+        });
+    </script>
+}

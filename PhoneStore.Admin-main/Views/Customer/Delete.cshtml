@@ -1,0 +1,126 @@
+@model PhoneStore.Models.Customer
+@{
+    ViewData["Title"] = "Xóa khách hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/css/customer-delete.css" rel="stylesheet" />
+
+<div class="delete-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="delete-card fade-in">
+                    <div class="delete-header">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h1 class="mb-0">
+                                <i class="fas fa-user-times mr-3"></i>
+                                Xóa khách hàng
+                            </h1>
+                            <a asp-action="Index" class="btn btn-back">
+                                <i class="fas fa-arrow-left mr-2"></i>
+                                Quay lại
+                            </a>
+                        </div>
+                    </div>
+
+                    @if (ViewBag.HasOrders)
+                    {
+                        <div class="warning-section">
+                            <div class="warning-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3 class="mb-3">Không thể xóa khách hàng!</h3>
+                            <p class="mb-0">Khách hàng này đã có đơn hàng trong hệ thống. Việc xóa có thể gây mất dữ liệu liên quan đến lịch sử đơn hàng.</p>
+                        </div>                        <div class="customer-info">
+                            <div class="action-buttons">
+                                <div class="button-group">
+                                    <a asp-action="Index" class="btn btn-modern btn-secondary-modern">
+                                        <i class="fas fa-arrow-left mr-2"></i>
+                                        Quay lại danh sách
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="warning-section">
+                            <div class="warning-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3 class="mb-3">Xác nhận xóa khách hàng</h3>
+                            <p class="mb-0">Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa khách hàng này?</p>
+                        </div>
+
+                        <div class="customer-info">
+                            <div class="info-row">
+                                <div class="info-label">
+                                    <i class="fas fa-id-card"></i>
+                                    ID:
+                                </div>
+                                <div class="info-value">@Model.CustomerId</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">
+                                    <i class="fas fa-user"></i>
+                                    Tên:
+                                </div>
+                                <div class="info-value">@Model.Name</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">
+                                    <i class="fas fa-envelope"></i>
+                                    Email:
+                                </div>
+                                <div class="info-value">@Model.Email</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">
+                                    <i class="fas fa-phone"></i>
+                                    Số điện thoại:
+                                </div>
+                                <div class="info-value">@Model.Phone</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">
+                                    <i class="fas fa-birthday-cake"></i>
+                                    Năm sinh:
+                                </div>
+                                <div class="info-value">@Model.BirthYear</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">
+                                    <i class="fas fa-crown"></i>
+                                    Loại thành viên:
+                                </div>
+                                <div class="info-value">@(Model.Membership?.Name ?? "Không có")</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Ngày tạo:
+                                </div>
+                                <div class="info-value">@(Model.CreatedDate.HasValue ? Model.CreatedDate.Value.ToString("dd/MM/yyyy HH:mm") : "")</div>
+                            </div>                            <div class="action-buttons">
+                                <div class="button-group">
+                                    <form asp-action="Delete" method="post">
+                                        <input type="hidden" asp-for="CustomerId" />
+                                        <button type="submit" class="btn btn-modern btn-danger-modern">
+                                            <i class="fas fa-trash mr-2"></i>
+                                            Xác nhận xóa
+                                        </button>
+                                    </form>
+                                    <a asp-action="Index" class="btn btn-modern btn-secondary-modern">
+                                        <i class="fas fa-times mr-2"></i>
+                                        Hủy bỏ
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,301 @@
+@model PhoneStore.Customer.Models.CustomerEntity
+
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Header -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Thông tin cá nhân</h1>
+                <p class="text-gray-600">Quản lý thông tin tài khoản của bạn</p>
+            </div>
+            <div class="text-sm text-gray-500">
+                <i class="fas fa-calendar-alt mr-1"></i>
+                Tham gia từ: @(Model.CreatedDate?.ToString("dd/MM/yyyy") ?? "N/A")
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Profile Form -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Cập nhật thông tin</h2>
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+                        <i class="fas fa-check-circle mr-2"></i>@TempData["Success"]
+                    </div>
+                }
+
+                <form asp-action="Profile" method="post" class="space-y-4">
+                    <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4"></div>
+
+                    <div>
+                        <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-1">Họ và tên</label>
+                        <input asp-for="Name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Nhập họ và tên">
+                        <span asp-validation-for="Name" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="Email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input asp-for="Email" type="email" readonly
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500 cursor-not-allowed"
+                               placeholder="Email không thể thay đổi">
+                        <p class="text-xs text-gray-500 mt-1">Email không thể thay đổi sau khi đăng ký</p>
+                    </div>
+
+                    <div>
+                        <label asp-for="Phone" class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                        <input asp-for="Phone" type="tel" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Nhập số điện thoại">
+                        <span asp-validation-for="Phone" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div>
+                        <label asp-for="BirthYear" class="block text-sm font-medium text-gray-700 mb-1">Năm sinh</label>
+                        <input asp-for="BirthYear" type="number" min="1900" max="2010" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Nhập năm sinh (tuỳ chọn)">
+                        <span asp-validation-for="BirthYear" class="text-red-500 text-sm"></span>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                            <i class="fas fa-save mr-2"></i>Cập nhật thông tin
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Account Stats -->
+        <div class="space-y-6">
+            <!-- Account Info -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Thông tin tài khoản</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Trạng thái</span>
+                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                            <i class="fas fa-check-circle mr-1"></i>Hoạt động
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                        <span class="text-gray-600">ID Khách hàng</span>
+                        <span class="font-mono text-sm text-gray-900">#@Model.Id.ToString("D6")</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2">
+                        <span class="text-gray-600">Ngày tham gia</span>
+                        <span class="text-sm text-gray-900">@(Model.CreatedDate?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Thao tác nhanh</h3>
+                <div class="space-y-3">
+                    <a asp-controller="Customer" asp-action="Orders" class="flex items-center justify-between p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center">
+                            <i class="fas fa-shopping-bag text-blue-600 mr-3"></i>
+                            <span class="text-gray-700">Đơn hàng của tôi</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    <a asp-controller="Cart" asp-action="Index" class="flex items-center justify-between p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center">
+                            <i class="fas fa-shopping-cart text-green-600 mr-3"></i>
+                            <span class="text-gray-700">Giỏ hàng</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                    <a asp-controller="Product" asp-action="Index" class="flex items-center justify-between p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center">
+                            <i class="fas fa-mobile-alt text-purple-600 mr-3"></i>
+                            <span class="text-gray-700">Mua sắm</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Security -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Bảo mật</h3>
+                <div class="space-y-3">                    <button onclick="openChangePasswordModal()" class="w-full flex items-center justify-between p-3 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center">
+                            <i class="fas fa-key text-orange-600 mr-3"></i>
+                            <span class="text-gray-700">Đổi mật khẩu</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </button>
+                    <form asp-controller="Customer" asp-action="Logout" method="post" class="w-full">
+                        <button type="submit" class="w-full flex items-center justify-between p-3 border border-red-200 rounded-md hover:bg-red-50 transition-colors text-left">
+                            <div class="flex items-center">
+                                <i class="fas fa-sign-out-alt text-red-600 mr-3"></i>
+                                <span class="text-red-700">Đăng xuất</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-red-400"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div id="changePasswordModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Đổi mật khẩu</h3>
+                <button onclick="closeChangePasswordModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <form id="changePasswordForm" method="post" action="@Url.Action("ChangePassword", "Customer")" class="space-y-4">
+                @Html.AntiForgeryToken()
+
+                <div>
+                    <label for="currentPassword" class="block text-sm font-medium text-gray-700">Mật khẩu hiện tại</label>
+                    <div class="mt-1 relative">
+                        <input id="currentPassword" name="CurrentPassword" type="password" required
+                               class="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Nhập mật khẩu hiện tại">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePasswordModal('currentPassword')">
+                            <svg id="currentPassword-eye" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="newPassword" class="block text-sm font-medium text-gray-700">Mật khẩu mới</label>
+                    <div class="mt-1 relative">
+                        <input id="newPassword" name="NewPassword" type="password" required
+                               class="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Nhập mật khẩu mới">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePasswordModal('newPassword')">
+                            <svg id="newPassword-eye" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mt-1 text-xs text-gray-500">Mật khẩu phải có ít nhất 8 ký tự</div>
+                </div>
+
+                <div>
+                    <label for="confirmNewPassword" class="block text-sm font-medium text-gray-700">Xác nhận mật khẩu mới</label>
+                    <div class="mt-1 relative">
+                        <input id="confirmNewPassword" name="ConfirmNewPassword" type="password" required
+                               class="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="Xác nhận mật khẩu mới">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center" onclick="togglePasswordModal('confirmNewPassword')">
+                            <svg id="confirmNewPassword-eye" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-end space-x-3 pt-4">
+                    <button type="button" onclick="closeChangePasswordModal()"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
+                        Hủy
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors">
+                        Đổi mật khẩu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function openChangePasswordModal() {
+    document.getElementById('changePasswordModal').classList.remove('hidden');
+}
+
+function closeChangePasswordModal() {
+    document.getElementById('changePasswordModal').classList.add('hidden');
+    document.getElementById('changePasswordForm').reset();
+}
+
+function togglePasswordModal(fieldId) {
+    const passwordField = document.getElementById(fieldId);
+    const eyeIcon = document.getElementById(fieldId + '-eye');
+
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L8.05 8.05M13.12 13.12l3.83 3.83m0 0L20 20m-8.05-8.05l-4.242-4.242-1.83-1.83m13.708 13.708l-8-8"></path>
+        `;
+    } else {
+        passwordField.type = 'password';
+        eyeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        `;
+    }
+}
+
+// Form validation
+document.addEventListener('DOMContentLoaded', function() {
+    const changePasswordForm = document.getElementById('changePasswordForm');
+
+    changePasswordForm.addEventListener('submit', function(e) {
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+        if (!currentPassword) {
+            e.preventDefault();
+            alert('Vui lòng nhập mật khẩu hiện tại');
+            return;
+        }
+
+        if (newPassword.length < 8) {
+            e.preventDefault();
+            alert('Mật khẩu mới phải có ít nhất 8 ký tự');
+            return;
+        }
+
+        if (newPassword !== confirmNewPassword) {
+            e.preventDefault();
+            alert('Mật khẩu xác nhận không khớp');
+            return;
+        }
+
+        if (currentPassword === newPassword) {
+            e.preventDefault();
+            alert('Mật khẩu mới phải khác mật khẩu hiện tại');
+            return;
+        }
+    });
+});
+
+// Close modal when clicking outside
+document.getElementById('changePasswordModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeChangePasswordModal();
+    }
+});
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

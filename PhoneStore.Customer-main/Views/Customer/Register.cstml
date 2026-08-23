@@ -1,0 +1,117 @@
+@model PhoneStore.Customer.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="mx-auto h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
+                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Đăng ký tài khoản mới
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Đã có tài khoản?
+                <a href="/customer/login" class="font-medium text-blue-600 hover:text-blue-500">
+                    Đăng nhập ngay
+                </a>
+            </p>
+        </div>        <form id="register-form" class="mt-8 space-y-6" asp-action="Register" method="post">
+            <div class="space-y-4">
+                <div>
+                    <label asp-for="FirstName" class="block text-sm font-medium text-gray-700">Họ</label>
+                    <input asp-for="FirstName" id="FirstName" type="text" required
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                           placeholder="Nhập họ của bạn">
+                    <span asp-validation-for="FirstName" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="LastName" class="block text-sm font-medium text-gray-700">Tên</label>
+                    <input asp-for="LastName" id="LastName" type="text" required
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                           placeholder="Nhập tên của bạn">
+                    <span asp-validation-for="LastName" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input asp-for="Email" id="Email" type="email" required
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                           placeholder="Nhập email của bạn">
+                    <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="PhoneNumber" class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                    <input asp-for="PhoneNumber" id="Phone" type="tel" required
+                           class="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                           placeholder="Nhập số điện thoại">
+                    <span asp-validation-for="PhoneNumber" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Password" class="block text-sm font-medium text-gray-700">Mật khẩu</label>
+                    <div class="relative">
+                        <input asp-for="Password" id="Password" type="password" required
+                               class="mt-1 appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                               placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center toggle-password">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="ConfirmPassword" class="block text-sm font-medium text-gray-700">Xác nhận mật khẩu</label>
+                    <div class="relative">
+                        <input asp-for="ConfirmPassword" id="ConfirmPassword" type="password" required
+                               class="mt-1 appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                               placeholder="Nhập lại mật khẩu">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center toggle-password">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-red-500 text-sm"></span>
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <input id="agree-terms" name="agree-terms" type="checkbox" required
+                       class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label for="agree-terms" class="ml-2 block text-sm text-gray-900">
+                    Tôi đồng ý với
+                    <a href="/terms" class="text-blue-600 hover:text-blue-500">Điều khoản sử dụng</a>
+                    và
+                    <a href="/privacy" class="text-blue-600 hover:text-blue-500">Chính sách bảo mật</a>
+                </label>
+            </div>
+
+            @if (ViewData["ErrorMessage"] != null)
+            {
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <span class="block sm:inline">@ViewData["ErrorMessage"]</span>
+                </div>
+            }
+
+            <div>
+                <button type="submit"
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-blue-500 group-hover:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"></path>
+                        </svg>
+                    </span>
+                    Đăng ký
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,242 @@
+@model PhoneStore.Models.Warranty
+
+@{
+    ViewData["Title"] = "Chi tiết bảo hành";
+}
+
+<div class="flex-1 p-6">
+    <!-- Breadcrumb -->
+    <nav class="mb-6">
+        <ol class="flex items-center space-x-2 text-sm text-gray-500">
+            <li><a asp-action="Index" class="hover:text-blue-600">Quản lý bảo hành</a></li>
+            <li><span class="mx-2">/</span></li>
+            <li class="text-gray-900">Chi tiết bảo hành</li>
+        </ol>
+    </nav>
+
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <!-- Header -->
+        <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                Chi tiết bảo hành: @Model.WarrantyCode
+            </h2>
+            <a asp-action="Index" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Quay lại
+            </a>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Warranty Information -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">Thông tin bảo hành</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Mã bảo hành</label>
+                                    <div class="mt-1 text-sm text-gray-900">@Model.WarrantyCode</div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Trạng thái</label>
+                                    <div class="mt-1">
+                                        @if (Model.Status == PhoneStore.Models.Warranty.WarrantyStatus.Active)
+                                        {
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Đang bảo hành</span>
+                                        }
+                                        else if (Model.Status == PhoneStore.Models.Warranty.WarrantyStatus.Expired)
+                                        {
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">Hết hạn</span>
+                                        }
+                                        else if (Model.Status == PhoneStore.Models.Warranty.WarrantyStatus.Void)
+                                        {
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Đã hủy</span>
+                                        }
+                                        else if (Model.Status == PhoneStore.Models.Warranty.WarrantyStatus.Transferred)
+                                        {
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đã chuyển nhượng</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Ngày bắt đầu</label>
+                                    <div class="mt-1 text-sm text-gray-900">@Model.StartDate.ToString("dd/MM/yyyy")</div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Ngày hết hạn</label>
+                                    <div class="mt-1 text-sm text-gray-900">@Model.EndDate.ToString("dd/MM/yyyy")</div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Thời gian bảo hành</label>
+                                    <div class="mt-1 text-sm text-gray-900">@Model.WarrantyPeriodMonths tháng</div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Số ngày còn lại</label>
+                                    <div class="mt-1 text-sm">
+                                        @if (Model.IsActiveWarranty())
+                                        {
+                                            <span class="text-green-600 font-medium">@Model.DaysRemaining() ngày</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-gray-500">Đã hết hạn</span>
+                                        }
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.Notes))
+                                {
+                                    <div class="md:col-span-2">
+                                        <label class="text-sm font-medium text-gray-700">Ghi chú</label>
+                                        <div class="mt-1 text-sm text-gray-900">@Model.Notes</div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Information -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+                        <div class="px-6 py-4 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900">Thông tin khách hàng</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Tên khách hàng</label>
+                                    <div class="mt-1 text-sm text-gray-900">@Model.Customer?.Name</div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Email</label>
+                                    <div class="mt-1 text-sm text-gray-900">@Model.Customer?.Email</div>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-medium text-gray-700">Số điện thoại</label>
+                                    <div class="mt-1 text-sm text-gray-900">@Model.Customer?.Phone</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Information -->
+            <div class="mt-6">
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Thông tin sản phẩm</h3>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Tên sản phẩm</label>
+                                <div class="mt-1 text-sm text-gray-900">@Model.OrderDetail?.Product?.ProductName</div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Màu sắc</label>
+                                <div class="mt-1 text-sm text-gray-900">@Model.OrderDetail?.Color?.ColorName</div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Số lượng</label>
+                                <div class="mt-1 text-sm text-gray-900">@Model.OrderDetail?.Quantity</div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Giá mua</label>
+                                <div class="mt-1 text-sm text-gray-900">@Model.OrderDetail?.Product?.Price.ToString("C0", new System.Globalization.CultureInfo("vi-VN"))</div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Mã đơn hàng</label>
+                                <div class="mt-1 text-sm">
+                                    <a asp-controller="Order" asp-action="Details" asp-route-id="@Model.OrderDetail?.OrderId" 
+                                       class="text-blue-600 hover:text-blue-800 hover:underline">
+                                        #@Model.OrderDetail?.OrderId
+                                    </a>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Ngày đặt hàng</label>
+                                <div class="mt-1 text-sm text-gray-900">@Model.OrderDetail?.Order?.OrderDate?.ToString("dd/MM/yyyy")</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warranty Claims -->
+            @if (Model.WarrantyClaims?.Any() == true)
+            {
+                <div class="mt-6">
+                    <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+                        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-lg font-semibold text-gray-900">Lịch sử khiếu nại</h3>
+                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">@Model.WarrantyClaims.Count khiếu nại</span>
+                        </div>
+                        <div class="p-6">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ngày khiếu nại</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Loại vấn đề</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mô tả</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trạng thái</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach (var claim in Model.WarrantyClaims.OrderByDescending(c => c.SubmittedDate))
+                                        {
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@claim.SubmittedDate.ToString("dd/MM/yyyy")</td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">@claim.IssueType</td>
+                                                <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">@claim.IssueDescription</td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    @if (claim.Status == "Đang xử lý")
+                                                    {
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Đang xử lý</span>
+                                                    }
+                                                    else if (claim.Status == "Đã giải quyết")
+                                                    {
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Đã giải quyết</span>
+                                                    }
+                                                    else if (claim.Status == "Từ chối")
+                                                    {
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Từ chối</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">@claim.Status</span>
+                                                    }
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                    <a asp-controller="Warranty" asp-action="ClaimDetails" asp-route-id="@claim.WarrantyClaimId" 
+                                                       class="inline-flex items-center px-3 py-1 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                        </svg>
+                                                        Chi tiết
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

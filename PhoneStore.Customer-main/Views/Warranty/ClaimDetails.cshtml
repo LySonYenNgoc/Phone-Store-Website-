@@ -1,0 +1,403 @@
+@model PhoneStore.Customer.Models.WarrantyClaim
+@{
+    ViewData["Title"] = "Chi tiết yêu cầu bảo hành";
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-8" aria-label="Breadcrumb">
+        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+            <li class="inline-flex items-center">
+                <a href="@Url.Action("Index", "Home")" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                    </svg>
+                    Trang chủ
+                </a>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <a href="@Url.Action("Index")" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">Bảo hành</a>
+                </div>
+            </li>
+            <li>
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <a href="@Url.Action("Details", new { id = Model.WarrantyId })" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2">@Model.Warranty.WarrantyCode</a>
+                </div>
+            </li>
+            <li aria-current="page">
+                <div class="flex items-center">
+                    <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2">Yêu cầu #@Model.WarrantyClaimId</span>
+                </div>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 flex items-center">
+            <svg class="w-8 h-8 text-blue-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+            </svg>
+            Chi tiết yêu cầu bảo hành
+        </h2>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Claim Information -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h5 class="text-lg font-semibold text-gray-900">Thông tin yêu cầu</h5>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Mã yêu cầu:</span>
+                                <span class="text-sm font-semibold text-blue-600">#@Model.WarrantyClaimId</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Mã claim:</span>
+                                <span class="text-sm font-semibold text-gray-900">@Model.ClaimCode</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Loại vấn đề:</span>
+                                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">@Model.IssueType</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày gửi:</span>
+                                <span class="text-sm text-gray-900">@Model.SubmittedDate.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Trạng thái:</span>
+                                <div>
+                                    @switch (Model.Status)
+                                    {
+                                        case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Pending:
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Chờ xử lý</span>
+                                            break;
+                                        case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.InProgress:
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Đang xử lý</span>
+                                            break;
+                                        case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Approved:
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Chấp nhận</span>
+                                            break;
+                                        case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Rejected:
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Từ chối</span>
+                                            break;
+                                        case PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Completed:
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">Hoàn thành</span>
+                                            break;
+                                    }
+                                </div>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày xử lý:</span>
+                                <span class="text-sm text-gray-900">
+                                    @if (Model.ProcessedDate.HasValue)
+                                    {
+                                        @Model.ProcessedDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-400">Chưa xử lý</span>
+                                    }
+                                </span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày hoàn thành:</span>
+                                <span class="text-sm text-gray-900">
+                                    @if (Model.CompletedDate.HasValue)
+                                    {
+                                        @Model.CompletedDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-400">Chưa hoàn thành</span>
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h6 class="text-sm font-medium text-gray-900 mb-3">Mô tả vấn đề:</h6>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <p class="text-gray-700">@Model.IssueDescription</p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.AdminNotes))
+                    {
+                        <div class="mt-6">
+                            <h6 class="text-sm font-medium text-gray-900 mb-3">Ghi chú từ bộ phận kỹ thuật:</h6>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div class="flex">
+                                    <svg class="w-5 h-5 text-blue-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <p class="ml-3 text-blue-700">@Model.AdminNotes</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Warranty Information -->
+            <div class="bg-white rounded-lg shadow-lg mt-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h5 class="text-lg font-semibold text-gray-900">Thông tin bảo hành liên quan</h5>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Mã bảo hành:</span>
+                                <a href="@Url.Action("Details", new { id = Model.Warranty.WarrantyId })" 
+                                   class="text-sm font-semibold text-blue-600 hover:text-blue-800">
+                                    @Model.Warranty.WarrantyCode
+                                </a>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Sản phẩm:</span>
+                                <span class="text-sm font-semibold text-gray-900">@Model.Warranty.OrderDetail.Product.Name</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Màu sắc:</span>
+                                <span class="text-sm text-gray-900">
+                                    @if (Model.Warranty.OrderDetail.Color != null)
+                                    {
+                                        @Model.Warranty.OrderDetail.Color.Name
+                                    }
+                                    else
+                                    {
+                                        <span class="text-gray-400">Không có</span>
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày bắt đầu BH:</span>
+                                <span class="text-sm text-gray-900">@Model.Warranty.StartDate.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Ngày kết thúc BH:</span>
+                                <span class="text-sm text-gray-900">@Model.Warranty.EndDate.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm font-medium text-gray-500">Trạng thái BH:</span>
+                                <div>
+                                    @if (Model.Warranty.IsActiveWarranty())
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Hết hạn</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Timeline & Actions -->
+        <div class="lg:col-span-1">
+            <!-- Status Timeline -->
+            <div class="bg-white rounded-lg shadow-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h6 class="text-base font-semibold text-gray-900">Tiến trình xử lý</h6>
+                </div>
+                <div class="p-6">
+                    <div class="flow-root">
+                        <ul class="-mb-8">
+                            <li>
+                                <div class="relative pb-8">
+                                    <div class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"></div>
+                                    <div class="relative flex space-x-3">
+                                        <div>
+                                            <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
+                                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                </svg>
+                                            </span>
+                                        </div>
+                                        <div class="min-w-0 flex-1 pt-1.5">
+                                            <p class="text-sm font-medium text-gray-900">Yêu cầu đã gửi</p>
+                                            <p class="text-sm text-gray-500">@Model.SubmittedDate.ToString("dd/MM/yyyy HH:mm")</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            @if (Model.Status != PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Pending)
+                            {
+                                <li>
+                                    <div class="relative pb-8">
+                                        @if (Model.Status != PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Rejected && Model.Status != PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Completed)
+                                        {
+                                            <div class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200"></div>
+                                        }
+                                        <div class="relative flex space-x-3">
+                                            <div>
+                                                <span class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center ring-8 ring-white">
+                                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="min-w-0 flex-1 pt-1.5">
+                                                <p class="text-sm font-medium text-gray-900">Đang xử lý</p>
+                                                <p class="text-sm text-gray-500">
+                                                    @if (Model.ProcessedDate.HasValue)
+                                                    {
+                                                        @Model.ProcessedDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                                    }
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+
+                            @if (Model.Status == PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Completed)
+                            {
+                                <li>
+                                    <div class="relative">
+                                        <div class="relative flex space-x-3">
+                                            <div>
+                                                <span class="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center ring-8 ring-white">
+                                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="min-w-0 flex-1 pt-1.5">
+                                                <p class="text-sm font-medium text-gray-900">Hoàn thành</p>
+                                                <p class="text-sm text-gray-500">
+                                                    @if (Model.CompletedDate.HasValue)
+                                                    {
+                                                        @Model.CompletedDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                                    }
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                            else if (Model.Status == PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Rejected)
+                            {
+                                <li>
+                                    <div class="relative">
+                                        <div class="relative flex space-x-3">
+                                            <div>
+                                                <span class="h-8 w-8 rounded-full bg-red-500 flex items-center justify-center ring-8 ring-white">
+                                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                            <div class="min-w-0 flex-1 pt-1.5">
+                                                <p class="text-sm font-medium text-gray-900">Từ chối</p>
+                                                <p class="text-sm text-gray-500">
+                                                    @if (Model.ProcessedDate.HasValue)
+                                                    {
+                                                        @Model.ProcessedDate.Value.ToString("dd/MM/yyyy HH:mm")
+                                                    }
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-lg mt-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h6 class="text-base font-semibold text-gray-900">Thao tác</h6>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-3">
+                        <a href="@Url.Action("Details", new { id = Model.Warranty.WarrantyId })" 
+                           class="w-full inline-flex justify-center items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 2.676-1.148 5.216-2.793 7.45-4.971.134-.13.264-.263.39-.398A12.019 12.019 0 0021 9a12.02 12.02 0 00-.382-3.016z"></path>
+                            </svg>
+                            Xem bảo hành
+                        </a>
+                        <a href="@Url.Action("Index")" class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+                            </svg>
+                            Danh sách bảo hành
+                        </a>
+                        @if (Model.Warranty.IsActiveWarranty() && 
+                             Model.Status != PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.Pending && 
+                             Model.Status != PhoneStore.Customer.Models.WarrantyClaim.ClaimStatus.InProgress)
+                        {
+                            <a href="@Url.Action("CreateClaim", new { warrantyId = Model.Warranty.WarrantyId })" 
+                               class="w-full inline-flex justify-center items-center px-4 py-2 border border-yellow-300 text-sm font-medium rounded-md text-yellow-700 bg-yellow-50 hover:bg-yellow-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                Tạo yêu cầu mới
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="bg-white rounded-lg shadow-lg mt-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h6 class="text-base font-semibold text-gray-900">Hỗ trợ khách hàng</h6>
+                </div>
+                <div class="p-6">
+                    <div class="text-sm text-gray-600">
+                        <p class="font-medium text-gray-900 mb-3">Cần hỗ trợ thêm?</p>
+                        <div class="space-y-2">
+                            <p class="flex items-center">
+                                <svg class="w-4 h-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                                </svg>
+                                Hotline: 1900-xxxx
+                            </p>
+                            <p class="flex items-center">
+                                <svg class="w-4 h-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                    <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                </svg>
+                                Email: support@phonestore.com
+                            </p>
+                            <p class="flex items-center">
+                                <svg class="w-4 h-4 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                </svg>
+                                8:00 - 17:00 (T2-T6)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

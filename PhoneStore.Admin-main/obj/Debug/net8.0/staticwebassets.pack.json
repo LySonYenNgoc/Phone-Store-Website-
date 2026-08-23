@@ -1,0 +1,373 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/obj/Debug/net8.0/scopedcss/projectbundle/PhoneStore.bundle.scp.css",
+      "PackagePath": "staticwebassets/PhoneStore.bundle.scp.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/css/nucleo-icons.css",
+      "PackagePath": "staticwebassets/assets/css/nucleo-icons.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/css/nucleo-svg.css",
+      "PackagePath": "staticwebassets/assets/css/nucleo-svg.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/css/perfect-scrollbar.css",
+      "PackagePath": "staticwebassets/assets/css/perfect-scrollbar.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/css/soft-ui-dashboard-tailwind.css",
+      "PackagePath": "staticwebassets/assets/css/soft-ui-dashboard-tailwind.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/css/soft-ui-dashboard-tailwind.min.css",
+      "PackagePath": "staticwebassets/assets/css/soft-ui-dashboard-tailwind.min.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/css/tooltips.css",
+      "PackagePath": "staticwebassets/assets/css/tooltips.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo-icons.eot",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo-icons.eot"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo-icons.svg",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo-icons.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo-icons.ttf",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo-icons.ttf"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo-icons.woff",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo-icons.woff"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo-icons.woff2",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo-icons.woff2"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo.eot",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo.eot"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo.ttf",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo.ttf"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo.woff",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo.woff"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/fonts/nucleo.woff2",
+      "PackagePath": "staticwebassets/assets/fonts/nucleo.woff2"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/apple-icon.png",
+      "PackagePath": "staticwebassets/assets/img/apple-icon.png"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/bruce-mars.jpg",
+      "PackagePath": "staticwebassets/assets/img/bruce-mars.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/constructions.jpg",
+      "PackagePath": "staticwebassets/assets/img/constructions.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/curved-images/curved0.jpg",
+      "PackagePath": "staticwebassets/assets/img/curved-images/curved0.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/curved-images/curved1.jpg",
+      "PackagePath": "staticwebassets/assets/img/curved-images/curved1.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/curved-images/curved14.jpg",
+      "PackagePath": "staticwebassets/assets/img/curved-images/curved14.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/curved-images/curved6.jpg",
+      "PackagePath": "staticwebassets/assets/img/curved-images/curved6.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/curved-images/curved8.jpg",
+      "PackagePath": "staticwebassets/assets/img/curved-images/curved8.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/curved-images/white-curved.jpeg",
+      "PackagePath": "staticwebassets/assets/img/curved-images/white-curved.jpeg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/down-arrow-dark.svg",
+      "PackagePath": "staticwebassets/assets/img/down-arrow-dark.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/down-arrow.svg",
+      "PackagePath": "staticwebassets/assets/img/down-arrow.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/favicon.png",
+      "PackagePath": "staticwebassets/assets/img/favicon.png"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/home-decor-1.jpg",
+      "PackagePath": "staticwebassets/assets/img/home-decor-1.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/home-decor-2.jpg",
+      "PackagePath": "staticwebassets/assets/img/home-decor-2.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/home-decor-3.jpg",
+      "PackagePath": "staticwebassets/assets/img/home-decor-3.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/illustrations/rocket-white.png",
+      "PackagePath": "staticwebassets/assets/img/illustrations/rocket-white.png"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/ivana-square.jpg",
+      "PackagePath": "staticwebassets/assets/img/ivana-square.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/ivancik.jpg",
+      "PackagePath": "staticwebassets/assets/img/ivancik.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/kal-visuals-square.jpg",
+      "PackagePath": "staticwebassets/assets/img/kal-visuals-square.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/logo-ct.png",
+      "PackagePath": "staticwebassets/assets/img/logo-ct.png"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/logos/admin-account-1980.png",
+      "PackagePath": "staticwebassets/assets/img/logos/admin-account-1980.png"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/logos/d184c32b-9410-4627-881c-e3db80456315.jpg",
+      "PackagePath": "staticwebassets/assets/img/logos/d184c32b-9410-4627-881c-e3db80456315.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/logos/mastercard.png",
+      "PackagePath": "staticwebassets/assets/img/logos/mastercard.png"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/logos/visa.png",
+      "PackagePath": "staticwebassets/assets/img/logos/visa.png"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/marie.jpg",
+      "PackagePath": "staticwebassets/assets/img/marie.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/shapes/waves-white.svg",
+      "PackagePath": "staticwebassets/assets/img/shapes/waves-white.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/small-logos/icon-sun-cloud.png",
+      "PackagePath": "staticwebassets/assets/img/small-logos/icon-sun-cloud.png"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/small-logos/logo-atlassian.svg",
+      "PackagePath": "staticwebassets/assets/img/small-logos/logo-atlassian.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/small-logos/logo-invision.svg",
+      "PackagePath": "staticwebassets/assets/img/small-logos/logo-invision.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/small-logos/logo-jira.svg",
+      "PackagePath": "staticwebassets/assets/img/small-logos/logo-jira.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/small-logos/logo-slack.svg",
+      "PackagePath": "staticwebassets/assets/img/small-logos/logo-slack.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/small-logos/logo-spotify.svg",
+      "PackagePath": "staticwebassets/assets/img/small-logos/logo-spotify.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/small-logos/logo-webdev.svg",
+      "PackagePath": "staticwebassets/assets/img/small-logos/logo-webdev.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/small-logos/logo-xd.svg",
+      "PackagePath": "staticwebassets/assets/img/small-logos/logo-xd.svg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/team-1.jpg",
+      "PackagePath": "staticwebassets/assets/img/team-1.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/team-2.jpg",
+      "PackagePath": "staticwebassets/assets/img/team-2.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/team-3.jpg",
+      "PackagePath": "staticwebassets/assets/img/team-3.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/team-4.jpg",
+      "PackagePath": "staticwebassets/assets/img/team-4.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/img/vr-bg.jpg",
+      "PackagePath": "staticwebassets/assets/img/vr-bg.jpg"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/dropdown.js",
+      "PackagePath": "staticwebassets/assets/js/dropdown.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/fixed-plugin.js",
+      "PackagePath": "staticwebassets/assets/js/fixed-plugin.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/nav-pills.js",
+      "PackagePath": "staticwebassets/assets/js/nav-pills.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/navbar-collapse.js",
+      "PackagePath": "staticwebassets/assets/js/navbar-collapse.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/navbar-sticky.js",
+      "PackagePath": "staticwebassets/assets/js/navbar-sticky.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/perfect-scrollbar.js",
+      "PackagePath": "staticwebassets/assets/js/perfect-scrollbar.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/plugins/Chart.extension.js",
+      "PackagePath": "staticwebassets/assets/js/plugins/Chart.extension.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/plugins/chartjs.min.js",
+      "PackagePath": "staticwebassets/assets/js/plugins/chartjs.min.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/plugins/perfect-scrollbar.min.js",
+      "PackagePath": "staticwebassets/assets/js/plugins/perfect-scrollbar.min.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/sidenav-burger.js",
+      "PackagePath": "staticwebassets/assets/js/sidenav-burger.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/soft-ui-dashboard-tailwind.js",
+      "PackagePath": "staticwebassets/assets/js/soft-ui-dashboard-tailwind.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/soft-ui-dashboard-tailwind.min.js",
+      "PackagePath": "staticwebassets/assets/js/soft-ui-dashboard-tailwind.min.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/assets/js/tooltips.js",
+      "PackagePath": "staticwebassets/assets/js/tooltips.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/css/access-denied.css",
+      "PackagePath": "staticwebassets/css/access-denied.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/css/customer-delete.css",
+      "PackagePath": "staticwebassets/css/customer-delete.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/css/site.css",
+      "PackagePath": "staticwebassets/css/site.css"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/favicon.ico",
+      "PackagePath": "staticwebassets/favicon.ico"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/js/access-denied.js",
+      "PackagePath": "staticwebassets/js/access-denied.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/js/product-index.js",
+      "PackagePath": "staticwebassets/js/product-index.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/js/site.js",
+      "PackagePath": "staticwebassets/js/site.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery-validation-unobtrusive/LICENSE.txt",
+      "PackagePath": "staticwebassets/lib/jquery-validation-unobtrusive/LICENSE.txt"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery-validation/LICENSE.md",
+      "PackagePath": "staticwebassets/lib/jquery-validation/LICENSE.md"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery-validation/dist/additional-methods.js",
+      "PackagePath": "staticwebassets/lib/jquery-validation/dist/additional-methods.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery-validation/dist/additional-methods.min.js",
+      "PackagePath": "staticwebassets/lib/jquery-validation/dist/additional-methods.min.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery-validation/dist/jquery.validate.js",
+      "PackagePath": "staticwebassets/lib/jquery-validation/dist/jquery.validate.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery-validation/dist/jquery.validate.min.js",
+      "PackagePath": "staticwebassets/lib/jquery-validation/dist/jquery.validate.min.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery/LICENSE.txt",
+      "PackagePath": "staticwebassets/lib/jquery/LICENSE.txt"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery/dist/jquery.js",
+      "PackagePath": "staticwebassets/lib/jquery/dist/jquery.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery/dist/jquery.min.js",
+      "PackagePath": "staticwebassets/lib/jquery/dist/jquery.min.js"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/lib/jquery/dist/jquery.min.map",
+      "PackagePath": "staticwebassets/lib/jquery/dist/jquery.min.map"
+    },
+    {
+      "Id": "/Users/khoahuynh/Downloads/PhoneStore-Dashboard 2/PhoneStore/wwwroot/uploads/.gitkeep",
+      "PackagePath": "staticwebassets/uploads/.gitkeep"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.PhoneStore.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.PhoneStore.props",
+      "PackagePath": "build\\PhoneStore.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.PhoneStore.props",
+      "PackagePath": "buildMultiTargeting\\PhoneStore.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.PhoneStore.props",
+      "PackagePath": "buildTransitive\\PhoneStore.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhoneStore", "PhoneStore.csproj", "{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testcase_Ad", "..\Testcase_Ad\Testcase_Ad.csproj", "{CBCFC7CA-5829-4F69-8948-A031FF0CA808}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAD", "..\TestAD\TestAD.csproj", "{1DF4BF98-BE08-4A97-8446-AAE5CE545E03}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FCB430A-98E9-7AFD-319D-F71D2D5B2D43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBCFC7CA-5829-4F69-8948-A031FF0CA808}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBCFC7CA-5829-4F69-8948-A031FF0CA808}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBCFC7CA-5829-4F69-8948-A031FF0CA808}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBCFC7CA-5829-4F69-8948-A031FF0CA808}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DF4BF98-BE08-4A97-8446-AAE5CE545E03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DF4BF98-BE08-4A97-8446-AAE5CE545E03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DF4BF98-BE08-4A97-8446-AAE5CE545E03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DF4BF98-BE08-4A97-8446-AAE5CE545E03}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5DE62B14-6848-4260-ABC1-40376B45F730}
+	EndGlobalSection
+EndGlobal

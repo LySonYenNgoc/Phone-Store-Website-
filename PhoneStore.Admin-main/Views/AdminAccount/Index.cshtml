@@ -1,0 +1,141 @@
+@model IEnumerable<PhoneStore.Models.Admin>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Quản lý tài khoản";
+}
+@Html.AntiForgeryToken()
+<div class="bg-white p-6 rounded-xl shadow-md">
+    <h2 class="text-2xl font-bold mb-6">Quản lý tài khoản Admin</h2>
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Họ tên</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tên đăng nhập</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ngày sinh</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">CMND/CCCD</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Quyền</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Trạng thái</th>
+                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            @foreach (var admin in Model)
+            {
+                <tr data-admin-id="@admin.AdminId">
+                    <td class="px-4 py-2">@admin.AdminId</td>
+                    <td class="px-4 py-2">@admin.FullName</td>
+                    <td class="px-4 py-2">@admin.Username</td>
+                    <td class="px-4 py-2">@admin.BirthDate?.ToString("dd/MM/yyyy")</td>
+                    <td class="px-4 py-2">@admin.NationalId</td>
+                    <td class="px-4 py-2">
+                        <form class="flex items-center space-x-2">
+                            <select name="role" class="border rounded px-2 py-1">
+                                @if (ViewBag.Roles != null)
+                                {
+                                    foreach (var role in (List<PhoneStore.Models.Role>)ViewBag.Roles)
+                                    {
+                                        <option value="@role.RoleId" selected="@(admin.RoleId == role.RoleId ? "selected" : null)">@role.RoleName</option>
+                                    }
+                                }
+                            </select>
+                            <button type="button" onclick="updateRole(@admin.AdminId, this)" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600">Lưu</button>
+                        </form>
+                    </td>
+                    <td class="px-4 py-2">
+                        @if (admin.IsApproved)
+                        {
+                            <span class="text-green-600 font-semibold">Đã duyệt</span>
+                            @if (admin.IsBlocked)
+                            {
+                                <span class="text-red-600 font-semibold ml-2">(Đã chặn)</span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-yellow-600 font-semibold">Chờ duyệt</span>
+                        }
+                    </td>
+                    <td class="px-4 py-2 space-x-2">
+                        @if (!admin.IsApproved)
+                        {
+                            <form asp-action="ApproveAdmin" method="post" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@admin.AdminId" />
+                                <button type="submit" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Duyệt</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="RevokeApproval" method="post" class="inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@admin.AdminId" />
+                                <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Hủy duyệt</button>
+                            </form>
+                        }
+
+                        <form asp-action="BlockAdmin" method="post" class="inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@admin.AdminId" />
+                            <button type="submit" class="@(admin.IsBlocked ? "bg-orange-500" : "bg-red-500") text-white px-3 py-1 rounded hover:@(admin.IsBlocked ? "bg-orange-600" : "bg-red-600")">
+                                @(admin.IsBlocked ? "Bỏ chặn" : "Chặn")
+                            </button>
+                        </form>
+
+                        <form asp-action="DeleteAdmin" method="post" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài khoản này?');">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@admin.AdminId" />
+                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        function updateRole(adminId, button) {
+            const form = button.closest('form');
+            const select = form.querySelector('select');
+            const newRole = select.value;
+
+            if (!confirm(`Bạn có chắc chắn muốn thay đổi quyền thành ${newRole}?`)) {
+                return;
+            }            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            fetch('@Url.Action("UpdateRole", "AdminAccount")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': token
+                },
+                body: JSON.stringify({ id: adminId, role: newRole })
+            })            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    select.setAttribute('data-original-value', newRole);
+                    button.classList.remove('bg-blue-500');
+                    button.classList.add('bg-green-500');
+                    setTimeout(() => {
+                        button.classList.remove('bg-green-500');
+                        button.classList.add('bg-blue-500');
+                    }, 1000);
+                    alert('Cập nhật quyền thành công');
+                } else {
+                    throw new Error(data.message || 'Cập nhật quyền thất bại');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message || 'Có lỗi xảy ra khi cập nhật quyền');
+                select.value = select.getAttribute('data-original-value') || newRole;
+            });
+        }
+    </script>
+}

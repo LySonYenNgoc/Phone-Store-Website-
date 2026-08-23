@@ -1,0 +1,379 @@
+@model PhoneStore.Customer.ViewModels.ProductDetailViewModel
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <nav class="flex mb-8 text-sm">
+        <a href="/" class="text-gray-500 hover:text-gray-700">Trang chủ</a>
+        <span class="mx-2 text-gray-500">/</span>
+        <a href="/product" class="text-gray-500 hover:text-gray-700">Sản phẩm</a>
+        <span class="mx-2 text-gray-500">/</span>
+        <span class="text-gray-900">@Model.Name</span>
+    </nav>    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Product Images -->
+        <div class="space-y-4">
+            <div class="relative bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <div class="aspect-square bg-gray-50 flex items-center justify-center p-4">
+                    <img id="main-image"
+                         src="@(Model.Images.FirstOrDefault()?.ImageUrl ?? "/images/no-image.jpg")"
+                         alt="@Model.Name"
+                         class="max-w-full max-h-full object-contain cursor-pointer hover:scale-105 transition-transform duration-300"
+                         onclick="openImageModal('@(Model.Images.FirstOrDefault()?.ImageUrl ?? "/images/no-image.jpg")','@Model.Name')">
+                </div>
+                <div class="absolute top-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-lg opacity-0 hover:opacity-100 transition-opacity">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                    </svg>
+                </div>
+            </div>
+
+            @if (Model.Images.Count > 1)
+            {                <div class="grid grid-cols-4 gap-2">
+                    @foreach (var image in Model.Images)
+                    {
+                        <button class="relative bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-blue-500 transition-colors group"
+                                onclick="changeMainImage('@image.ImageUrl')" ondblclick="openImageModal('@image.ImageUrl','@Model.Name')">
+                            <div class="aspect-square bg-gray-50 flex items-center justify-center p-2">
+                                <img src="@image.ImageUrl" alt="@Model.Name"
+                                     class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-200">
+                            </div>
+                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                                </svg>
+                            </div>
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+
+        <!-- Product Info -->
+        <div class="space-y-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">@Model.Name</h1>
+                <div class="flex items-center space-x-2 mb-4">
+                    <span class="text-sm text-gray-500">Danh mục:</span>
+                    <span class="bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded">@Model.CategoryName</span>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <div class="text-3xl font-bold text-red-600">
+                    @Model.Price.ToString("N0") VNĐ
+                </div>
+                @if (Model.OriginalPrice > Model.Price)
+                {
+                    <div class="flex items-center space-x-2">
+                        <span class="text-lg text-gray-400 line-through">@Model.OriginalPrice.ToString("N0") VNĐ</span>
+                        <span class="bg-red-500 text-white text-sm px-2 py-1 rounded">
+                            -@(((Model.OriginalPrice - Model.Price) / Model.OriginalPrice * 100).ToString("F0"))%
+                        </span>
+                    </div>
+                }
+            </div>
+
+            <!-- Colors -->
+            @if (Model.Colors.Count > 0)
+            {
+                <div class="space-y-3">
+                    <h3 class="text-lg font-medium text-gray-900">Màu sắc:</h3>
+                    <div class="flex flex-wrap gap-3">
+                        @foreach (var color in Model.Colors)
+                        {
+                            <button class="color-selector group relative flex items-center space-x-2 px-4 py-2 border-2 border-gray-300 rounded-lg hover:border-blue-500 transition-colors"
+                                    data-color-id="@color.Id"
+                                    onclick="selectColor(@color.Id, '@color.Name')">
+                                <div class="w-6 h-6 rounded-full border border-gray-300"
+                                     style="background-color: @color.HexCode"></div>
+                                <span class="text-sm font-medium text-gray-700 group-hover:text-blue-600">@color.Name</span>
+                            </button>
+                        }
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        Màu đã chọn: <span id="selected-color-name" class="font-medium text-gray-900">@Model.Colors.FirstOrDefault()?.Name</span>
+                    </p>
+                </div>
+            }
+
+            <!-- Specifications -->
+            @if (!string.IsNullOrEmpty(Model.Specifications))
+            {
+                <div class="space-y-2">
+                    <h3 class="text-lg font-medium text-gray-900">Thông số kỹ thuật:</h3>
+                    <div class="prose prose-sm max-w-none">
+                        @Html.Raw(Model.Specifications.Replace("\n", "<br>"))
+                    </div>
+                </div>
+            }
+
+            <!-- Description -->
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="space-y-2">
+                    <h3 class="text-lg font-medium text-gray-900">Mô tả sản phẩm:</h3>
+                    <div class="prose prose-sm max-w-none text-gray-700">
+                        @Html.Raw(Model.Description.Replace("\n", "<br>"))
+                    </div>
+                </div>
+            }
+
+            <!-- Stock Status -->
+            <div class="flex items-center space-x-2">
+                @if (Model.StockQuantity > 0)
+                {
+                    <span class="inline-flex items-center text-green-600">
+                        <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Còn hàng (@Model.StockQuantity sản phẩm)
+                    </span>
+                }
+                else
+                {
+                    <span class="inline-flex items-center text-red-600">
+                        <svg class="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        Hết hàng
+                    </span>
+                }
+            </div>
+
+            <!-- Quantity and Add to Cart -->
+            <div class="space-y-4">
+                <div class="flex items-center space-x-4">
+                    <label class="text-sm font-medium text-gray-700">Số lượng:</label>
+                    <div class="flex items-center border border-gray-300 rounded-lg">
+                        <button type="button" class="px-3 py-2 text-gray-600 hover:text-gray-800" onclick="decreaseQuantity()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
+                            </svg>
+                        </button>
+                        <input type="number" id="quantity" value="1" min="1" max="@Model.StockQuantity"
+                               class="w-16 text-center border-0 focus:ring-0 focus:outline-none">
+                        <button type="button" class="px-3 py-2 text-gray-600 hover:text-gray-800" onclick="increaseQuantity()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex space-x-4">
+                    <button class="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium
+                                   @(Model.StockQuantity <= 0 ? "opacity-50 cursor-not-allowed" : "")"
+                            onclick="addToCart(@Model.Id)"
+                            @(Model.StockQuantity <= 0 ? "disabled" : "")>
+                        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m1.6 8L6 21h12M9 19h6M8 19a2 2 0 100 4 2 2 0 000-4zm8 0a2 2 0 100 4 2 2 0 000-4z"></path>
+                        </svg>
+                        Thêm vào giỏ hàng
+                    </button>
+                    <button class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    @if (Model.RelatedProducts.Count > 0)
+    {
+        <div class="mt-16">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">Sản phẩm liên quan</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach (var product in Model.RelatedProducts)
+                {
+                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                        <a href="/product/detail/@product.Id" class="block">
+                            <div class="aspect-w-1 aspect-h-1 bg-gray-100">
+                                <img src="@(product.ImageUrl ?? "/images/no-image.jpg")" alt="@product.Name"
+                                     class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-medium text-gray-900 mb-2 line-clamp-2">@product.Name</h3>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-lg font-bold text-red-600">@product.Price.ToString("N0") VNĐ</span>
+                                    @if (product.OriginalPrice > product.Price)
+                                    {
+                                        <span class="text-sm text-gray-400 line-through">@product.OriginalPrice.ToString("N0") VNĐ</span>
+                                    }
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>    }
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+    <div class="relative max-w-4xl max-h-full p-4">
+        <button onclick="closeImageModal()" class="absolute top-2 right-2 text-white hover:text-gray-300 z-10">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <img id="modalImage" src="" alt="" class="max-w-full max-h-full object-contain">
+    </div>
+</div>
+
+<script>
+function changeMainImage(imageUrl) {
+    document.getElementById('main-image').src = imageUrl;
+    // Update the onclick to use the new image URL
+    document.getElementById('main-image').setAttribute('onclick', `openImageModal('${imageUrl}','@Model.Name')`);
+}
+
+function openImageModal(imageUrl, altText) {
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    modalImage.src = imageUrl;
+    modalImage.alt = altText || '@Model.Name';
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
+// Close modal when clicking outside the image
+document.getElementById('imageModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeImageModal();
+    }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeImageModal();
+    }
+});
+
+// Initialize color selection
+document.addEventListener('DOMContentLoaded', function() {
+    // Select first color by default
+    const firstColor = document.querySelector('.color-selector');
+    if (firstColor) {
+        const colorId = firstColor.dataset.colorId;
+        const colorName = firstColor.querySelector('span').textContent;
+        selectColor(parseInt(colorId), colorName);
+    }
+});
+
+// Color selection functionality
+function selectColor(colorId, colorName) {
+    // Update selected color name
+    document.getElementById('selected-color-name').textContent = colorName;
+    
+    // Update button states
+    document.querySelectorAll('.color-selector').forEach(btn => {
+        btn.classList.remove('border-blue-500', 'bg-blue-50');
+        btn.classList.add('border-gray-300');
+    });
+    
+    const selectedButton = document.querySelector(`[data-color-id="${colorId}"]`);
+    if (selectedButton) {
+        selectedButton.classList.remove('border-gray-300');
+        selectedButton.classList.add('border-blue-500', 'bg-blue-50');
+    }
+    
+    // Filter images by color
+    const allImages = @Html.Raw(Json.Serialize(Model.Images));
+    const colorImages = allImages.filter(img => img.colorId === colorId || img.colorId === null);
+    
+    // Update main image
+    if (colorImages.length > 0) {
+        const mainImage = document.getElementById('main-image');
+        mainImage.src = colorImages[0].imageUrl;
+        
+        // Update thumbnail grid
+        updateThumbnailGrid(colorImages);
+    }
+}
+
+// Update thumbnail images based on selected color
+function updateThumbnailGrid(images) {
+    const thumbnailContainer = document.querySelector('.grid.grid-cols-4');
+    if (!thumbnailContainer || images.length <= 1) return;
+    
+    thumbnailContainer.innerHTML = '';
+    
+    images.forEach(image => {
+        const button = document.createElement('button');
+        button.className = 'relative bg-white border border-gray-200 rounded-lg overflow-hidden hover:border-blue-500 transition-colors group';
+        button.onclick = () => changeMainImage(image.imageUrl);
+        button.ondblclick = () => openImageModal(image.imageUrl, '@Model.Name');
+        
+        button.innerHTML = `
+            <div class="aspect-square bg-gray-50 flex items-center justify-center p-2">
+                <img src="${image.imageUrl}" alt="@Model.Name"
+                     class="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-200">
+            </div>
+            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-200 flex items-center justify-center">
+                <svg class="w-4 h-4 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path>
+                </svg>
+            </div>
+        `;
+        
+        thumbnailContainer.appendChild(button);
+    });
+}
+
+function increaseQuantity() {
+    const input = document.getElementById('quantity');
+    const max = parseInt(input.getAttribute('max'));
+    const current = parseInt(input.value);
+    if (current < max) {
+        input.value = current + 1;
+    }
+}
+
+function decreaseQuantity() {
+    const input = document.getElementById('quantity');
+    const current = parseInt(input.value);
+    if (current > 1) {
+        input.value = current - 1;
+    }
+}
+
+function addToCart(productId) {
+    const quantity = parseInt(document.getElementById('quantity').value);
+
+    fetch('/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            productId: productId,
+            quantity: quantity
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+            updateCartCount();
+        } else {
+            showNotification(data.message || 'Có lỗi xảy ra!', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Có lỗi xảy ra!', 'error');
+    });
+}
+</script>

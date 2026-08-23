@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome to PhoneStore Admin Dashboard</h1>
+    <p>Redirecting to dashboard...</p>
+</div>
+
+<script>
+    // Redirect to dashboard after a short delay
+    setTimeout(function() {
+        window.location.href = '/Dashboard/Index';
+    }, 1000);
+</script>

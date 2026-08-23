@@ -1,0 +1,102 @@
+@model PhoneStore.Models.Coupon
+
+@{
+    ViewData["Title"] = "Tạo Coupon Mới";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center mb-6">
+            <a href="@Url.Action("Index")" class="text-blue-600 hover:text-blue-800 mr-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+            </a>
+            <h1 class="text-3xl font-bold text-gray-800">Tạo Coupon Mới</h1>
+        </div>
+
+        <form asp-action="Create" method="post" class="space-y-6">
+            <div asp-validation-summary="ModelOnly" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label asp-for="Code" class="block text-sm font-medium text-gray-700 mb-2">Mã Coupon</label>
+                    <input asp-for="Code" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Nhập mã coupon (vd: SALE20)" />
+                    <span asp-validation-for="Code" class="text-red-500 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="DiscountAmount" class="block text-sm font-medium text-gray-700 mb-2">Số tiền giảm (VNĐ)</label>
+                    <input asp-for="DiscountAmount" type="number" step="1000" min="1000"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Nhập số tiền giảm" />
+                    <span asp-validation-for="DiscountAmount" class="text-red-500 text-sm"></span>
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="ExpiryDate" class="block text-sm font-medium text-gray-700 mb-2">Ngày hết hạn</label>
+                <input asp-for="ExpiryDate" type="datetime-local"
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                <span asp-validation-for="ExpiryDate" class="text-red-500 text-sm"></span>
+                <p class="text-sm text-gray-500 mt-1">Coupon sẽ tự động hết hạn sau ngày này</p>
+            </div>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-blue-800 mb-2">Thông tin bổ sung</h3>
+                <ul class="text-sm text-blue-700 space-y-1">
+                    <li>• Mã coupon phải là duy nhất trong hệ thống</li>
+                    <li>• Số tiền giảm phải lớn hơn 0</li>
+                    <li>• Ngày hết hạn phải sau ngày hiện tại</li>
+                    <li>• Coupon sẽ được đánh dấu là "Hoạt động" sau khi tạo</li>
+                </ul>
+            </div>
+
+            <div class="flex justify-end space-x-4">
+                <a href="@Url.Action("Index")" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition duration-200">
+                    Hủy
+                </a>
+                <button type="submit" class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition duration-200">
+                    Tạo Coupon
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Set default expiry date to 1 month from now
+        document.addEventListener('DOMContentLoaded', function() {
+            const expiryInput = document.querySelector('input[name="ExpiryDate"]');
+            if (!expiryInput.value) {
+                const now = new Date();
+                const oneMonthLater = new Date(now.getFullYear(), now.getMonth() + 1, now.getDate());
+                const formattedDate = oneMonthLater.toISOString().slice(0, 16);
+                expiryInput.value = formattedDate;
+            }
+        });
+
+        // Auto-generate coupon code
+        function generateCouponCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.querySelector('input[name="Code"]').value = result;
+        }
+
+        // Add generate button
+        const codeInput = document.querySelector('input[name="Code"]');
+        const generateBtn = document.createElement('button');
+        generateBtn.type = 'button';
+        generateBtn.className = 'mt-2 px-3 py-1 text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 rounded transition duration-200';
+        generateBtn.textContent = 'Tạo mã tự động';
+        generateBtn.onclick = generateCouponCode;
+        codeInput.parentNode.appendChild(generateBtn);
+    </script>
+}

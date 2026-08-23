@@ -1,0 +1,272 @@
+@model PhoneStore.Models.Order
+@{
+    ViewData["Title"] = "Tạo đơn hàng mới";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mx-auto px-4 pb-10">
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Tạo đơn hàng mới</h2>
+            <a href="@Url.Action("Index")" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Quay lại
+            </a>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <form asp-action="Create" method="post" class="space-y-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Thông tin khách hàng</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Khách hàng</label>
+                        <select asp-for="CustomerId" asp-items="ViewBag.Customers" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" id="customerSelect">
+                            <option value="">-- Chọn khách hàng --</option>
+                        </select>
+                        <span asp-validation-for="CustomerId" class="text-red-500 text-sm"></span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Địa chỉ giao hàng</label>
+                        <select asp-for="ShippingAddressId" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" id="addressSelect">
+                            <option value="">-- Chọn địa chỉ --</option>
+                        </select>
+                        <span asp-validation-for="ShippingAddressId" class="text-red-500 text-sm"></span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phương thức thanh toán</label>
+                        <select asp-for="PaymentMethod" asp-items="ViewBag.PaymentMethods" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">-- Chọn phương thức thanh toán --</option>
+                        </select>
+                        <span asp-validation-for="PaymentMethod" class="text-red-500 text-sm"></span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+                        <select asp-for="Status" asp-items="ViewBag.StatusList" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        </select>
+                        <span asp-validation-for="Status" class="text-red-500 text-sm"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-semibold text-gray-800">Sản phẩm đơn hàng</h3>
+                    <button type="button" id="addProductBtn" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg flex items-center text-sm">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Thêm sản phẩm
+                    </button>
+                </div>
+
+                <div id="productList" class="space-y-4">
+                    <div class="text-gray-500 text-center py-6" id="emptyProductMessage">
+                        Chưa có sản phẩm nào trong đơn hàng. Vui lòng thêm sản phẩm.
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-between border-t pt-4">
+                    <span class="text-lg font-medium">Tổng tiền:</span>
+                    <span class="text-xl font-bold text-blue-600" id="totalAmount">0 ₫</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4">Ghi chú</h3>
+                <div>
+                    <textarea asp-for="Notes" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" placeholder="Nhập ghi chú cho đơn hàng (nếu có)..."></textarea>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <a href="@Url.Action("Index")" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg">Hủy</a>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg">Tạo đơn hàng</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Product Template -->
+<template id="productTemplate">
+    <div class="product-item border rounded-lg p-4 relative">
+        <button type="button" class="remove-product absolute top-2 right-2 text-red-500 hover:text-red-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div class="md:col-span-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Sản phẩm</label>
+                <select name="productIds" class="product-select w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <option value="">-- Chọn sản phẩm --</option>
+                    @foreach (var item in ViewBag.Products)
+                    {
+                        <option value="@item.Value">@item.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Màu sắc</label>
+                <select name="colorIds" class="color-select w-full px-3 py-2 border border-gray-300 rounded-lg">
+                    <option value="">-- Chọn màu --</option>
+                </select>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Số lượng</label>
+                <input type="number" name="quantities" min="1" value="1" class="quantity-input w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Đơn giá</label>
+                <div class="price-display w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50">0 ₫</div>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Thành tiền</label>
+                <div class="subtotal-display w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 font-medium">0 ₫</div>
+            </div>
+        </div>
+        <div class="mt-2">
+            <div class="text-sm stock-info text-gray-600"></div>
+        </div>
+    </div>
+</template>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            let totalAmount = 0;
+            
+            // Format number as currency
+            function formatCurrency(number) {
+                return new Intl.NumberFormat('vi-VN').format(number) + ' ₫';
+            }
+            
+            // Update total amount
+            function updateTotalAmount() {
+                totalAmount = 0;
+                $('.subtotal-display').each(function() {
+                    const subtotal = parseFloat($(this).data('value') || 0);
+                    totalAmount += subtotal;
+                });
+                $('#totalAmount').text(formatCurrency(totalAmount));
+            }
+            
+            // Add product handler
+            $('#addProductBtn').click(function() {
+                const template = document.querySelector('#productTemplate');
+                const clone = document.importNode(template.content, true);
+                
+                $('#productList').append(clone);
+                $('#emptyProductMessage').hide();
+                
+                // Setup event handlers for the new product row
+                const $newRow = $('#productList .product-item:last');
+                
+                // Remove product handler
+                $newRow.find('.remove-product').click(function() {
+                    $(this).closest('.product-item').remove();
+                    updateTotalAmount();
+                    if ($('#productList .product-item').length === 0) {
+                        $('#emptyProductMessage').show();
+                    }
+                });
+                
+                // Product select change handler
+                $newRow.find('.product-select').change(function() {
+                    const productId = $(this).val();
+                    const $row = $(this).closest('.product-item');
+                    const $colorSelect = $row.find('.color-select');
+                    const $quantityInput = $row.find('.quantity-input');
+                    const $priceDisplay = $row.find('.price-display');
+                    const $subtotalDisplay = $row.find('.subtotal-display');
+                    const $stockInfo = $row.find('.stock-info');
+                    
+                    $colorSelect.empty().append('<option value="">-- Chọn màu --</option>');
+                    $priceDisplay.text('0 ₫');
+                    $subtotalDisplay.text('0 ₫').data('value', 0);
+                    $stockInfo.text('');
+                    
+                    if (productId) {
+                        // Get product details
+                        $.getJSON('@Url.Action("GetProductDetails")', { productId: productId }, function(data) {
+                            if (data) {
+                                $priceDisplay.text(formatCurrency(data.finalPrice)).data('value', data.finalPrice);
+                                $stockInfo.text(`Còn ${data.stock} sản phẩm trong kho`);
+                                
+                                // Update subtotal
+                                const quantity = parseInt($quantityInput.val()) || 1;
+                                const subtotal = data.finalPrice * quantity;
+                                $subtotalDisplay.text(formatCurrency(subtotal)).data('value', subtotal);
+                                updateTotalAmount();
+                            }
+                        });
+                        
+                        // Get product colors
+                        $.getJSON('@Url.Action("GetProductColors")', { productId: productId }, function(colors) {
+                            $colorSelect.empty().append('<option value="">-- Chọn màu --</option>');
+                            if (colors && colors.length > 0) {
+                                colors.forEach(function(color) {
+                                    $colorSelect.append(`<option value="${color.colorId}">${color.colorName}</option>`);
+                                });
+                            }
+                        });
+                    }
+                });
+                
+                // Quantity change handler
+                $newRow.find('.quantity-input').on('input', function() {
+                    const $row = $(this).closest('.product-item');
+                    const $priceDisplay = $row.find('.price-display');
+                    const $subtotalDisplay = $row.find('.subtotal-display');
+                    
+                    const price = parseFloat($priceDisplay.data('value') || 0);
+                    const quantity = parseInt($(this).val()) || 0;
+                    const subtotal = price * quantity;
+                    
+                    $subtotalDisplay.text(formatCurrency(subtotal)).data('value', subtotal);
+                    updateTotalAmount();
+                });
+            });
+            
+            // Customer select change handler
+            $('#customerSelect').change(function() {
+                const customerId = $(this).val();
+                const $addressSelect = $('#addressSelect');
+                
+                $addressSelect.empty().append('<option value="">-- Chọn địa chỉ --</option>');
+                
+                if (customerId) {
+                    $.getJSON('@Url.Action("GetCustomerAddresses")', { customerId: customerId }, function(addresses) {
+                        if (addresses && addresses.length > 0) {
+                            addresses.forEach(function(address) {
+                                $addressSelect.append(`<option value="${address.addressId}">${address.fullAddress}</option>`);
+                            });
+                        } else {
+                            $addressSelect.append('<option value="" disabled>Khách hàng chưa có địa chỉ</option>');
+                        }
+                    });
+                }
+            });
+            
+            // Add first product row automatically
+            $('#addProductBtn').click();
+        });
+    </script>
+}

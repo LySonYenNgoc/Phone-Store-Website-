@@ -1,0 +1,490 @@
+@{
+    ViewData["Title"] = "Báo cáo doanh thu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Thêm Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container mx-auto px-4 py-6 bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
+        <div class="animate-fade-in">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                📊 Báo cáo doanh thu
+            </h1>
+            <div class="mt-4 flex flex-wrap gap-4 items-end">
+                <form method="get" action="/Report/Revenue" class="flex items-end gap-3 bg-white p-3 rounded-xl shadow-sm border border-blue-100">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">Dòng sản phẩm</label>
+                        <select id="category" name="categoryId" class="px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none text-sm min-w-[200px]">
+                            <option value="">Tất cả danh mục</option>
+                            @if (ViewBag.Categories != null) {
+                                @foreach (var c in ViewBag.Categories) {
+                                    if (c.CategoryId == ViewBag.SelectedCategory) {
+                                        <option value="@c.CategoryId" selected>@c.CategoryName</option>
+                                    } else {
+                                        <option value="@c.CategoryId">@c.CategoryName</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-bold text-sm transition-all shadow-md active:scale-95">
+                        Lọc báo cáo
+                    </button>
+                    <input type="hidden" name="period" id="periodInput" value="@ViewBag.SelectedPeriod" />
+                </form>
+                
+                <div class="flex gap-2 bg-white p-2 rounded-xl shadow-sm border border-indigo-100 h-fit">
+                    @{
+                        var periods = new[] { 
+                            new { Id = "today", Name = "Hôm nay" },
+                            new { Id = "week", Name = "Tuần này" },
+                            new { Id = "month", Name = "Tháng này" },
+                            new { Id = "year", Name = "Năm nay" }
+                        };
+                    }
+                    @foreach (var p in periods) {
+                        var active = ViewBag.SelectedPeriod == p.Id;
+                        <a href="/Report/Revenue?period=@p.Id&categoryId=@ViewBag.SelectedCategory" 
+                           class="px-4 py-2 rounded-lg text-xs font-bold transition-all @(active ? "bg-indigo-600 text-white shadow-md scale-105" : "bg-gray-50 text-gray-600 hover:bg-gray-100")"
+                           id="filter-@p.Id">
+                            @p.Name
+                        </a>
+                    }
+                </div>
+            </div>
+            <p class="text-gray-600 mt-2 text-sm md:text-base">Phân tích chi tiết doanh thu và hiệu suất kinh doanh</p>
+        </div>
+        <div class="flex space-x-3">
+            <form asp-action="ExportRevenue" method="get" class="inline">
+                <input type="hidden" name="startDate" value="@DateTime.Today.AddMonths(-12):yyyy-MM-dd" />
+                <input type="hidden" name="endDate" value="@DateTime.Today:yyyy-MM-dd" />
+                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-file-excel mr-2"></i>
+                    Xuất Excel
+                </button>
+            </form>
+            <button onclick="showCustomExportModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 transform hover:scale-105 shadow-lg">
+                <i class="fas fa-calendar-alt mr-2"></i>
+                Xuất theo thời gian
+            </button>
+        </div>
+    </div>
+
+    <!-- Thống kê tổng quan -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Tổng doanh thu -->
+        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl shadow-xl p-6 transform hover:scale-105 transition duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-100 text-sm font-medium uppercase tracking-wide">Tổng doanh thu</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-2">@String.Format("{0:N0}", ViewBag.TotalRevenue) ₫</p>
+                </div>
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-dollar-sign text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doanh thu tháng này -->
+        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl shadow-xl p-6 transform hover:scale-105 transition duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-medium uppercase tracking-wide">Doanh thu tháng này</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-2">@String.Format("{0:N0}", ViewBag.MonthlyRevenue) ₫</p>
+                </div>
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-calendar-month text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tổng đơn hàng -->
+        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-xl shadow-xl p-6 transform hover:scale-105 transition duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-purple-100 text-sm font-medium uppercase tracking-wide">Tổng đơn hàng</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-2">@String.Format("{0:N0}", ViewBag.TotalOrders)</p>
+                </div>
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-shopping-cart text-2xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Giá trị đơn hàng TB -->
+        <div class="bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl shadow-xl p-6 transform hover:scale-105 transition duration-300">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-orange-100 text-sm font-medium uppercase tracking-wide">Giá trị TB/Đơn</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-2">@String.Format("{0:N0}", ViewBag.AverageOrderValue) ₫</p>
+                </div>
+                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-chart-line text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ doanh thu -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Biểu đồ doanh thu theo tháng -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Doanh thu 12 tháng gần đây</h3>
+            </div>
+            <div class="p-6">
+                <div class="relative" style="height: 400px;">
+                    <canvas id="monthlyRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ doanh thu theo ngày -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Doanh thu 30 ngày gần đây</h3>
+            </div>
+            <div class="p-6">
+                <div class="relative" style="height: 400px;">
+                    <canvas id="dailyRevenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top sản phẩm và danh mục -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Top sản phẩm bán chạy -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Top 10 sản phẩm bán chạy</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    @if (ViewBag.TopProducts != null)
+                    {
+                        @foreach (var product in ViewBag.TopProducts)
+                        {
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">@product.ProductName</h4>
+                                    <p class="text-sm text-gray-600">Số lượng: @product.TotalQuantity</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-semibold text-green-600">@String.Format("{0:N0}", product.TotalRevenue) ₫</p>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Doanh thu theo danh mục -->
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Doanh thu theo danh mục</h3>
+            </div>
+            <div class="p-6">
+                <div class="relative" style="height: 300px;">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top khách hàng -->
+    <div class="bg-white rounded-xl shadow-xl overflow-hidden mb-8">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Top 10 khách hàng theo doanh số</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Khách hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tổng chi tiêu</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số đơn hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giá trị TB/Đơn</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @if (ViewBag.CustomerStats != null)
+                    {
+                        @foreach (var customer in ViewBag.CustomerStats)
+                        {
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">@customer.CustomerName</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-semibold text-green-600">@String.Format("{0:N0}", customer.TotalSpent) ₫</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">@customer.OrderCount</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">@String.Format("{0:N0}", customer.AverageOrderValue) ₫</div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Thống kê theo tháng -->
+    <div class="bg-white rounded-xl shadow-xl overflow-hidden">
+        <div class="p-6 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Chi tiết thống kê theo tháng</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tháng/Năm</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Doanh thu</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Số đơn hàng</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giá trị TB/Đơn</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @if (ViewBag.MonthlyData != null)
+                    {
+                        @foreach (var month in ViewBag.MonthlyData)
+                        {
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">@month.Month/@month.Year</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-semibold text-green-600">@String.Format("{0:N0}", month.Revenue) ₫</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">@month.OrderCount</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">@String.Format("{0:N0}", month.AverageOrderValue) ₫</div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xuất báo cáo tùy chỉnh -->
+<div id="customExportModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg font-medium text-gray-900">Xuất báo cáo theo thời gian</h3>
+            <form asp-action="ExportRevenue" method="get" class="mt-4">
+                <div class="mb-4">
+                    <label for="startDate" class="block text-sm font-medium text-gray-700 mb-2">Từ ngày:</label>
+                    <input type="date" id="startDate" name="startDate" value="@DateTime.Today.AddMonths(-1):yyyy-MM-dd"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="endDate" class="block text-sm font-medium text-gray-700 mb-2">Đến ngày:</label>
+                    <input type="date" id="endDate" name="endDate" value="@DateTime.Today:yyyy-MM-dd"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="hideCustomExportModal()"
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        Hủy
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                        Xuất Excel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Biểu đồ doanh thu theo tháng
+            const monthlyCtx = document.getElementById('monthlyRevenueChart').getContext('2d');
+            new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(ViewBag.ChartMonths)],
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: [@Html.Raw(ViewBag.ChartRevenue)],
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }, {
+                        label: 'Số đơn hàng',
+                        data: [@Html.Raw(ViewBag.ChartOrders)],
+                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                        borderColor: 'rgba(34, 197, 94, 1)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        return 'Doanh thu: ' + context.raw.toLocaleString('vi-VN') + ' VNĐ';
+                                    } else {
+                                        return 'Số đơn hàng: ' + context.raw;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN');
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Biểu đồ doanh thu theo ngày
+            const dailyCtx = document.getElementById('dailyRevenueChart').getContext('2d');
+            new Chart(dailyCtx, {
+                type: 'bar',
+                data: {
+                    labels: [@Html.Raw(ViewBag.ChartDays)],
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: [@Html.Raw(ViewBag.ChartDailyRevenue)],
+                        backgroundColor: 'rgba(147, 51, 234, 0.8)',
+                        borderColor: 'rgba(147, 51, 234, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Doanh thu: ' + context.raw.toLocaleString('vi-VN') + ' VNĐ';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN');
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Biểu đồ danh mục
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            const categoryData = @Html.Raw(Json.Serialize(ViewBag.CategoryRevenue));
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryData.map(item => item.categoryName),
+                    datasets: [{
+                        data: categoryData.map(item => item.totalRevenue),
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(251, 191, 36, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(147, 51, 234, 0.8)',
+                            'rgba(236, 72, 153, 0.8)'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw.toLocaleString('vi-VN') + ' VNĐ';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        function showCustomExportModal() {
+            document.getElementById('customExportModal').classList.remove('hidden');
+        }
+
+        function hideCustomExportModal() {
+            document.getElementById('customExportModal').classList.add('hidden');
+        }
+
+        // Animation cho các cards
+        const cards = document.querySelectorAll('.transform');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('animate-fade-in');        });
+    </script>
+
+    <style>
+        @@keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fade-in 0.6s ease-out forwards;
+        }
+    </style>
+}
